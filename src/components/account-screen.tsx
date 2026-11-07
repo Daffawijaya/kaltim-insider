@@ -10,7 +10,7 @@ export function AccountScreen({mode}:{mode:"signin"|"signup"}){
       <Link className="account-close" href="/" aria-label="Tutup">×</Link>
     </header>
     <section className="account-panel">
-      <p className="account-kicker">{mode==="signin"?"Selamat datang kembali":"Jadi kontributor"}</p>
+      <p className="account-kicker">{mode==="signin"?"Selamat datang kembali":"Jadi penulis"}</p>
       <h1>{mode==="signin"?"Masuk ke akun":"Buat akun Kaltim Insider"}</h1>
       <p className="account-intro">{mode==="signin"?"Lanjutkan menulis dan berbagi kabar dari Kalimantan Timur.":"Daftar untuk mulai mengirim tulisan dan cerita dari daerahmu."}</p>
       <AuthForm mode={mode}/>

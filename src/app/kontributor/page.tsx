@@ -56,7 +56,7 @@ export default async function Contributor({ searchParams }: PageProps<"/kontribu
     if (oldest) search.set("order", "oldest");
     return `/kontributor?${search}#dashboard-panel`;
   };
-  const role = profile.role === "admin" ? "Administrator" : profile.role === "editor" ? "Redaktur" : "Kontributor";
+  const role = profile.role === "admin" ? "Administrator" : profile.role === "editor" ? "Redaktur" : "Penulis";
   const publicProfile = profile.username ? `/penulis/${encodeURIComponent(profile.username)}` : "/kontributor/profil";
   return <AccountShell role={profile.role} className={styles.dashboard}>
     <div className={styles.main}>
@@ -72,9 +72,9 @@ export default async function Contributor({ searchParams }: PageProps<"/kontribu
             <Link href="/kontributor/profil" className={styles.settings} aria-label="Pengaturan profil"><Settings size={21} /></Link>
           </section>
 
-          <section className={styles.hub} aria-labelledby="hub-heading"><div className={styles.hubMark} aria-hidden="true"><PenLine /></div><h2 id="hub-heading">Pusat Kontributor</h2><p>Mulai cerita baru, kelola tulisan, dan ikuti kabar dari redaksi Kaltim Insider dalam satu ruang.</p><Link className="button" href="/kontributor?tab=artikel#dashboard-panel">Kelola Tulisan Saya <ChevronRight size={16} aria-hidden="true" /></Link></section>
+          <section className={styles.hub} aria-labelledby="hub-heading"><div className={styles.hubMark} aria-hidden="true"><PenLine /></div><h2 id="hub-heading">Pusat Penulis</h2><p>Mulai cerita baru, kelola tulisan, dan ikuti kabar dari redaksi Kaltim Insider dalam satu ruang.</p><Link className="button" href="/kontributor?tab=artikel#dashboard-panel">Kelola Tulisan Saya <ChevronRight size={16} aria-hidden="true" /></Link></section>
 
-          <section className={styles.panel} id="dashboard-panel" aria-label="Aktivitas kontributor">
+          <section className={styles.panel} id="dashboard-panel" aria-label="Aktivitas penulis">
             <nav className={styles.tabs} aria-label="Bagian dashboard">{Object.entries(contributorTabs).map(([key, label]) => <Link key={key} href={`/kontributor?tab=${key}#dashboard-panel`} aria-current={tab === key ? "page" : undefined}>{label}</Link>)}</nav>
             <div className={styles.panelBody}>
               {tab === "notifikasi" && <><div className={styles.notificationHeading}>{!!notifications?.data?.some(item => !item.read_at) && <form action={markNotificationsRead}><button className="button">Tandai sudah dibaca</button></form>}</div>
@@ -88,7 +88,7 @@ export default async function Contributor({ searchParams }: PageProps<"/kontribu
                 <details className={styles.statsDetails}><summary>Ringkasan tulisan</summary><div className={styles.stats}>{stats.map(([label, result]) => <div key={label}><span>{label}</span><strong>{result.error ? "—" : number(result.count ?? 0)}</strong></div>)}</div>
           {stats.some(([, result]) => result.error) && <p className={styles.quiet} role="status">Sebagian statistik belum dapat dimuat.</p>}</details>
               </>}
-              {tab === "kegiatan" && <><h2>Kegiatan komunitas</h2><div className={styles.empty}><CalendarDays size={40} aria-hidden="true" /><h3>Belum ada kegiatan</h3><p>Informasi kegiatan kontributor akan ditampilkan saat tersedia.</p></div></>}
+              {tab === "kegiatan" && <><h2>Kegiatan komunitas</h2><div className={styles.empty}><CalendarDays size={40} aria-hidden="true" /><h3>Belum ada kegiatan</h3><p>Informasi kegiatan penulis akan ditampilkan saat tersedia.</p></div></>}
               {tab === "panduan" && <><div className={styles.panelHeading}><div><h2>Panduan & FAQ</h2><p>Kenali alur tulisanmu di Kaltim Insider.</p></div><BookOpen size={24} aria-hidden="true" /></div><div className={styles.faq}>
                 <details open><summary>Bagaimana mulai menulis?</summary><p>Pilih <Link href="/kontributor/tulis">Tulis Artikel</Link>, isi informasi tulisan, lalu simpan sebagai draf untuk dilanjutkan.</p></details>
                 <details><summary>Bagaimana mengirim tulisan ke redaksi?</summary><p>Lengkapi kolom yang wajib diisi di editor, lalu gunakan aksi kirim untuk mengajukan tulisan kepada redaksi. Tulisan yang sedang diproses belum dapat diedit.</p></details>
@@ -102,8 +102,8 @@ export default async function Contributor({ searchParams }: PageProps<"/kontribu
 
         <aside className={styles.sidebar} aria-label="Kabar dan inspirasi komunitas">
           <section className={styles.sideSection}><div className={styles.sideHeading}><h2>Kabar Redaksi</h2><FileText size={20} aria-hidden="true" /></div><p className={styles.caption}>Kabar terbaru yang telah diterbitkan.</p><ArticleList articles={(recent.data ?? []) as unknown as SidebarArticle[]} error={!!recent.error} empty="Belum ada kabar yang diterbitkan." /></section>
-          <section className={styles.sideSection}><div className={styles.sideHeading}><h2>Kontributor Teratas</h2><Trophy size={20} aria-hidden="true" /></div><div className={styles.smallEmpty}><Users size={28} aria-hidden="true" /><p>Peringkat kontributor belum tersedia.</p><span>Terus berbagi cerita yang berarti untuk pembaca.</span></div></section>
-          <section className={`${styles.sideSection} ${styles.spotlight}`}><div className={styles.sideHeading}><h2>Sorotan Kontributor</h2><Sparkles size={20} aria-hidden="true" /></div><div className={styles.spotlightBanner} aria-hidden="true"><Trophy size={42} /><strong>KARYA PILIHAN</strong><span>Cerita terbaik dari komunitas</span><Sparkles size={24} /></div><p className={styles.caption}>Pilihan redaksi dari artikel yang telah terbit.</p><ArticleList articles={(featured.data ?? []) as unknown as SidebarArticle[]} error={!!featured.error} empty="Belum ada karya yang disorot redaksi." /></section>
+          <section className={styles.sideSection}><div className={styles.sideHeading}><h2>Penulis Teratas</h2><Trophy size={20} aria-hidden="true" /></div><div className={styles.smallEmpty}><Users size={28} aria-hidden="true" /><p>Peringkat penulis belum tersedia.</p><span>Terus berbagi cerita yang berarti untuk pembaca.</span></div></section>
+          <section className={`${styles.sideSection} ${styles.spotlight}`}><div className={styles.sideHeading}><h2>Sorotan Penulis</h2><Sparkles size={20} aria-hidden="true" /></div><div className={styles.spotlightBanner} aria-hidden="true"><Trophy size={42} /><strong>KARYA PILIHAN</strong><span>Cerita terbaik dari komunitas</span><Sparkles size={24} /></div><p className={styles.caption}>Pilihan redaksi dari artikel yang telah terbit.</p><ArticleList articles={(featured.data ?? []) as unknown as SidebarArticle[]} error={!!featured.error} empty="Belum ada karya yang disorot redaksi." /></section>
           <section className={styles.sideSection}><div className={styles.sideHeading}><h2>Artikel Populer</h2><Eye size={20} aria-hidden="true" /></div><p className={styles.caption}>Berdasarkan total tayangan sepanjang waktu.</p><ArticleList articles={(popular.data ?? []) as unknown as SidebarArticle[]} error={!!popular.error} empty="Artikel populer belum tersedia." showViews /></section>
         </aside>
       </div>
