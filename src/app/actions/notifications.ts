@@ -1,0 +1,2 @@
+"use server"; import {revalidatePath} from "next/cache"; import {requireUser} from "@/lib/dal"; import {createClient} from "@/lib/supabase/server";
+export async function markNotificationsRead(){const user=await requireUser();const supabase=await createClient();const{error}=await supabase.from("notifications").update({read_at:new Date().toISOString()}).eq("user_id",user.id).is("read_at",null);if(error)throw new Error("Notifikasi belum dapat diperbarui.");revalidatePath("/kontributor/notifikasi");revalidatePath("/kontributor")}

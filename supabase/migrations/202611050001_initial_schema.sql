@@ -1,0 +1,13 @@
+create type public.user_role as enum ('contributor','editor','admin');
+create type public.article_status as enum ('draft','submitted','in_review','revision','approved','scheduled','published','rejected','archived');
+create table public.profiles (id uuid primary key references auth.users(id) on delete cascade, full_name text not null, username text unique, role public.user_role not null default 'contributor', city text, avatar_url text, bio text, created_at timestamptz not null default now());
+create table public.categories (id bigint generated always as identity primary key, name text not null unique, slug text not null unique);
+create table public.articles (id uuid primary key default gen_random_uuid(), author_id uuid not null references public.profiles(id), editor_id uuid references public.profiles(id), category_id bigint references public.categories(id), title text not null, slug text unique, excerpt text, body text not null default '', location text, cover_url text, status public.article_status not null default 'draft', submitted_at timestamptz, published_at timestamptz, created_at timestamptz not null default now(), updated_at timestamptz not null default now());
+create table public.article_reviews (id bigint generated always as identity primary key, article_id uuid not null references public.articles(id) on delete cascade, reviewer_id uuid not null references public.profiles(id), decision public.article_status not null, note text, created_at timestamptz not null default now());
+alter table public.profiles enable row level security; alter table public.articles enable row level security; alter table public.article_reviews enable row level security;
+create policy "profiles readable" on public.profiles for select using (true);
+create policy "own profile update" on public.profiles for update using (auth.uid()=id);
+create policy "published articles public" on public.articles for select using (status='published' or author_id=auth.uid());
+create policy "authors create articles" on public.articles for insert with check (author_id=auth.uid());
+create policy "authors edit drafts" on public.articles for update using (author_id=auth.uid() and status in ('draft','revision'));
+create policy "editors manage articles" on public.articles for all using (exists(select 1 from public.profiles p where p.id=auth.uid() and p.role in ('editor','admin')));

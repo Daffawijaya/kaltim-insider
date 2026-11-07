@@ -1,0 +1,3 @@
+import { getSiteUrl } from "@/lib/site-url";
+import type { MetadataRoute } from "next"; import { createClient } from "@/lib/supabase/server";
+export default async function sitemap():Promise<MetadataRoute.Sitemap>{const base=getSiteUrl();const supabase=await createClient();const{data,error}=await supabase.from("articles").select("slug,updated_at").eq("status","published");if(error)throw new Error("Sitemap belum dapat dimuat.");return[{url:base,lastModified:new Date(),changeFrequency:"hourly",priority:1},{url:`${base}/cari`,changeFrequency:"weekly",priority:.4},...(data??[]).filter(a=>a.slug).map(a=>({url:`${base}/artikel/${a.slug}`,lastModified:new Date(a.updated_at),changeFrequency:"daily" as const,priority:.8}))]}

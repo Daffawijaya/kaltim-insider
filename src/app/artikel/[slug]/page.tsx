@@ -1,0 +1,26 @@
+import type {Metadata} from "next";
+import Link from "next/link";
+import {notFound} from "next/navigation";
+import {Share2} from "lucide-react";
+import {SiteHeader} from "@/components/site-header";
+import {SiteFooter} from "@/components/site-footer";
+import {type Story} from "@/lib/data";
+import {getArticleBySlug,getPublishedArticles} from "@/lib/dal";
+import {readingMinutes} from "@/lib/editorial";
+import {splitArticleContent} from "@/lib/article-content";
+import {RichTextContent} from "@/components/rich-text-content";
+import {richTextPlainText} from "@/lib/rich-text";
+
+
+export async function generateMetadata({params}:PageProps<"/artikel/[slug]">):Promise<Metadata>{
+  const{slug}=await params;const article=await getArticleBySlug(slug);const item=article;if(!item)return{};
+  const image=item.cover_url;
+  return{title:item.title,description:item.excerpt,alternates:{canonical:`/artikel/${slug}`},openGraph:{title:item.title,description:item.excerpt,images:image?[image]:[]},twitter:{card:"summary_large_image",title:item.title,description:item.excerpt,images:image?[image]:[]}};
+}
+
+export default async function ArticlePage({params}:PageProps<"/artikel/[slug]">){
+  const{slug}=await params;const db=await getArticleBySlug(slug);if(!db)notFound();
+  const story:Story={slug:db.slug,title:db.title,excerpt:db.excerpt,category:db.categories?.name??"Berita",location:db.location,author:db.profiles?.full_name??"Redaksi Kaltim Insider",publishedAt:db.published_at?new Intl.DateTimeFormat("id-ID",{dateStyle:"long"}).format(new Date(db.published_at)):"Hari ini",image:db.cover_url??"/window.svg",advertorial:db.is_advertorial};
+  const content=splitArticleContent(db.body);const live=await getPublishedArticles(8);const feed:Story[]=live.filter(a=>a.slug!==slug).map(a=>({slug:a.slug,title:a.title,excerpt:a.excerpt,category:a.categories?.name??"Berita",location:a.location,author:a.profiles?.full_name??"Redaksi",publishedAt:a.published_at?new Intl.DateTimeFormat("id-ID",{dateStyle:"medium"}).format(new Date(a.published_at)):"",image:a.cover_url??"/window.svg",advertorial:a.is_advertorial}));const related=feed.slice(0,3);const more=feed.slice(0,4);const authorUrl=db.profiles?.username?`/penulis/${db.profiles.username}`:null;
+  return <><SiteHeader/><main className="news-article"><article><header className="article-frame article-news-header">{story.advertorial&&<strong className="advertorial-label">Kerja Sama/Advertorial</strong>}<h1>{story.title}</h1><div className="article-meta-row"><div><small>{story.publishedAt} · {readingMinutes([content.body,...content.blocks.map(block=>block.body)].map(value=>richTextPlainText(value)).join(" "))} menit baca</small><strong>{authorUrl?<Link href={authorUrl}>{story.author}</Link>:story.author}</strong><span>{story.location}</span></div><div className="article-actions"><a href={`https://wa.me/?text=${encodeURIComponent(story.title)}`} target="_blank" rel="noreferrer">Bagikan <Share2/></a></div></div></header><figure className="article-frame article-news-hero">{/* eslint-disable-next-line @next/next/no-img-element */}<img src={story.image} alt={`Foto utama ${story.title}`}/><figcaption>{content.cover.caption||story.excerpt}</figcaption></figure><div className="article-reading-layout"><div><p className="article-location-lead"><strong>{story.location.toUpperCase()}, Kaltim Insider — </strong></p><RichTextContent value={content.body} className="article-news-body"/></div></div>{content.blocks.map(block=><section className="article-content-block" key={block.id}><h2>{block.subtitle}</h2>{block.image_url&&<figure>{/* eslint-disable-next-line @next/next/no-img-element */}<img src={block.image_url} alt={block.subtitle}/><figcaption>{block.image_meta.caption}</figcaption></figure>}<RichTextContent value={block.body} className="article-news-body"/></section>)}<div className="article-frame article-tags"><span>{story.location}</span><span>{story.category}</span></div></article><section className="article-wide-section article-related"><h2>TERKAIT</h2><div>{related.map(s=><Link href={`/artikel/${s.slug}`} key={s.slug}>{s.advertorial&&<strong>Kerja Sama/Advertorial · </strong>}{s.title}</Link>)}</div></section><section className="article-wide-section article-more"><h2>BERITA LAINNYA</h2>{more.map(s=><article key={s.slug}><small>{s.publishedAt||"Hari ini"}</small><div><h3><Link href={`/artikel/${s.slug}`}>{s.advertorial&&<strong>Kerja Sama/Advertorial · </strong>}{s.title}</Link></h3><p>{s.excerpt}</p></div>{/* eslint-disable-next-line @next/next/no-img-element */}<img src={s.image} alt=""/></article>)}</section></main><SiteFooter/></>;
+}
