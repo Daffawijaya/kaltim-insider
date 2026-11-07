@@ -1,8 +1,7 @@
 import Link from "next/link";
 import { Bell, BookOpen, CalendarDays, ChevronRight, Eye, FileText, PenLine, Search, Settings, Sparkles, Trophy, Users, MoreVertical } from "lucide-react";
 import { DashboardImage } from "@/components/dashboard-image";
-import { ContributorHeader } from "@/components/contributor-header";
-import { SiteFooter } from "@/components/site-footer";
+import { AccountShell } from "@/components/account-shell";
 import { markNotificationsRead } from "@/app/actions/notifications";
 import { requireUser } from "@/lib/dal";
 import { createClient } from "@/lib/supabase/server";
@@ -59,9 +58,8 @@ export default async function Contributor({ searchParams }: PageProps<"/kontribu
   };
   const role = profile.role === "admin" ? "Administrator" : profile.role === "editor" ? "Redaktur" : "Kontributor";
   const publicProfile = profile.username ? `/penulis/${encodeURIComponent(profile.username)}` : "/kontributor/profil";
-  return <div className={`workspace ${styles.dashboard}`}>
-    <ContributorHeader profile={profile} />
-    <main className={`shell ${styles.main}`}>
+  return <AccountShell role={profile.role} className={styles.dashboard}>
+    <div className={styles.main}>
       <div className={styles.layout}>
         <div className={styles.content}>
           <section className={styles.profile} aria-labelledby="profile-heading">
@@ -109,7 +107,6 @@ export default async function Contributor({ searchParams }: PageProps<"/kontribu
           <section className={styles.sideSection}><div className={styles.sideHeading}><h2>Artikel Populer</h2><Eye size={20} aria-hidden="true" /></div><p className={styles.caption}>Berdasarkan total tayangan sepanjang waktu.</p><ArticleList articles={(popular.data ?? []) as unknown as SidebarArticle[]} error={!!popular.error} empty="Artikel populer belum tersedia." showViews /></section>
         </aside>
       </div>
-    </main>
-    <SiteFooter />
-  </div>;
+    </div>
+  </AccountShell>;
 }

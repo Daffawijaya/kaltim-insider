@@ -43,7 +43,9 @@ test("OTP signup may create a user; login cannot create an unknown email", async
   assert.match(form, /signInWithOtp\(otpRequest\(nextEmail, mode\)\)/);
   assert.match(form, /verifyOtp\(\{ email, token, type: "email" \}\)/);
   assert.match(form, /pattern="\[0-9\]\{6\}"/);
-  assert.match(form, /signInWithPassword/);
+  assert.match(form, /signIn\(form\)/);
+  assert.match(form, /Email atau username/);
+  assert.match(readFileSync("src/app/actions/auth.ts", "utf8"), /signInWithPassword/);
   assert.match(form, /completeSignup\(form\)/);
   assert.match(form, /autoComplete="name"/);
 });

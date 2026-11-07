@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import { completeSignup } from "@/app/actions/auth";
+import { completeSignup, signIn } from "@/app/actions/auth";
 import { otpRequest } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/client";
 
@@ -27,10 +27,8 @@ export function AuthForm({ mode }: { mode: "signin" | "signup" }) {
     try {
       const supabase = createClient();
       if (mode === "signin" && !useOtp) {
-        const nextEmail = String(form.get("email") ?? "").trim();
-        const password = String(form.get("password") ?? "");
-        const { error } = await supabase.auth.signInWithPassword({ email: nextEmail, password });
-        if (error) return setState({ error: "Email atau password tidak sesuai." });
+        const result = await signIn(form);
+        if (result.error) return setState(result);
         router.push("/kontributor");
         router.refresh();
         return;
@@ -87,7 +85,9 @@ export function AuthForm({ mode }: { mode: "signin" | "signup" }) {
   </form>;
 
   return <form onSubmit={submit} className="auth-form">
-    <label className={emailValid ? "valid-email" : ""}>Email<input name="email" type="email" autoComplete="email" required autoFocus value={email} onChange={event => setEmail(event.target.value)} />{emailValid && <span className="email-valid">✓</span>}</label>
+    {mode === "signin" && !useOtp
+      ? <label>Email atau username<input name="identifier" autoComplete="username" required autoFocus value={email} onChange={event => setEmail(event.target.value)} /></label>
+      : <label className={emailValid ? "valid-email" : ""}>Email<input name="email" type="email" autoComplete="email" required autoFocus value={email} onChange={event => setEmail(event.target.value)} />{emailValid && <span className="email-valid">✓</span>}</label>}
     {mode === "signin" && !useOtp && <label className="password-field">Password<input name="password" type={showPassword ? "text" : "password"} autoComplete="current-password" required /><button type="button" onClick={() => setShowPassword(value => !value)}>{showPassword ? "Sembunyikan password" : "Tampilkan password"}</button></label>}
     {state.error && <p className="form-message error" role="alert">{state.error}</p>}
     <button className="account-continue" disabled={pending}>{pending ? "Memproses…" : mode === "signin" && !useOtp ? "Masuk" : "Kirim kode"}</button>
