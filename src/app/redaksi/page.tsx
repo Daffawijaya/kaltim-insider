@@ -1,16 +1,35 @@
 import Link from "next/link";
-import { WorkspaceHeader } from "@/components/workspace-header";
+import { FileCheck2 } from "lucide-react";
+import { AccountShell } from "@/components/account-shell";
+import { DashboardImage } from "@/components/dashboard-image";
 import { requireRole } from "@/lib/dal";
 import { createClient } from "@/lib/supabase/server";
+import styles from "@/app/kontributor/dashboard.module.css";
+
+const statuses = ["submitted", "revision", "approved", "published", "rejected", "archived"] as const;
+const labels = { submitted: "Menunggu", revision: "Perlu revisi", approved: "Disetujui", published: "Terbit", rejected: "Ditolak", archived: "Arsip" };
 
 export default async function Editorial({ searchParams }: PageProps<"/redaksi">) {
-  await requireRole(["editor", "admin"]); const { status = "submitted", page: rawPage = "1" } = await searchParams;
-  const page = Math.max(1, Number(rawPage) || 1); const allowed = ["submitted", "revision", "approved", "published", "rejected", "archived"]; const active = allowed.includes(String(status)) ? String(status) : "submitted";
-  const supabase = await createClient(); const from = (page - 1) * 20;
-  const { data, count, error } = await supabase.from("articles").select("id,title,status,location,cover_url,submitted_at,profiles!articles_author_id_fkey(full_name),categories(name)", { count: "exact" }).eq("status", active).order("submitted_at", { ascending: true }).range(from, from + 19); if(error)throw new Error("Antrean belum dapat dimuat."); const rows = data ?? [];
-  return <div className="workspace"><WorkspaceHeader label="Meja Redaksi"/><main className="shell workspace-main"><div className="workspace-title"><div><h1>Antrean redaksi</h1><p>Periksa isi, beri catatan, dan putuskan kelayakan tulisan.</p></div></div>
-    <div className="filter-row editorial-tabs">{allowed.map(item=><Link className={item===active?"filter active":"filter"} href={`/redaksi?status=${item}`} key={item}>{item.replace("_"," ")}</Link>)}</div>
-    <section className="panel"><div className="panel-head"><h2>{active.replace("_"," ")}</h2><span>{count ?? 0} tulisan</span></div>{rows.length ? rows.map(a=><div className="submission" key={a.id}>{a.cover_url?/* eslint-disable-next-line @next/next/no-img-element */<img src={a.cover_url} alt=""/>:<div className="image-placeholder"/>}<div><h3>{a.title}</h3><p>{(a.profiles as unknown as {full_name:string}|null)?.full_name} · {(a.categories as unknown as {name:string}|null)?.name} · {a.location}</p></div><span className="status review">{a.status}</span><small>{a.submitted_at?new Intl.DateTimeFormat("id-ID",{dateStyle:"medium"}).format(new Date(a.submitted_at)):"—"}</small><Link className="button" href={`/redaksi/${a.id}`}>Buka</Link></div>):<div className="empty-state"><h3>Antrean bersih</h3><p>Tidak ada tulisan dalam status ini.</p></div>}</section>
-    <nav className="pagination">{page>1&&<Link href={`/redaksi?status=${active}&page=${page-1}`}>← Sebelumnya</Link>}{(count??0)>page*20&&<Link href={`/redaksi?status=${active}&page=${page+1}`}>Berikutnya →</Link>}</nav>
-  </main></div>;
+  const profile = await requireRole(["editor", "admin"]);
+  const { status = "submitted", page: rawPage = "1" } = await searchParams;
+  const page = Math.max(1, Number(rawPage) || 1);
+  const active = statuses.includes(status as typeof statuses[number]) ? status as typeof statuses[number] : "submitted";
+  const from = (page - 1) * 20;
+  const supabase = await createClient();
+  const { data, count, error } = await supabase.from("articles").select("id,title,status,location,cover_url,submitted_at,profiles!articles_author_id_fkey(full_name),categories(name)", { count: "exact" }).eq("status", active).order("submitted_at", { ascending: true }).range(from, from + 19);
+  if (error) throw new Error("Antrean belum dapat dimuat.");
+
+  return <AccountShell role={profile.role} className={styles.dashboard}><div className={styles.main}>
+    <div className={styles.panelHeading}><div><h1>Antrean redaksi</h1><p>Periksa isi, beri catatan, dan putuskan kelayakan tulisan.</p></div><FileCheck2 aria-hidden="true" /></div>
+    <nav className={styles.filters} aria-label="Filter status tulisan">{statuses.map(item => <Link href={`/redaksi?status=${item}`} aria-current={item === active ? "page" : undefined} key={item}>{labels[item]}</Link>)}</nav>
+    <section className={styles.panel} aria-labelledby="queue-heading">
+      <div className={styles.panelHeading}><div><h2 id="queue-heading">{labels[active]}</h2><p>{count ?? 0} tulisan</p></div></div>
+      {data?.length ? <div className={styles.submissions}>{data.map(article => <article className={styles.submission} key={article.id}>
+        {article.cover_url ? <DashboardImage src={article.cover_url} className={styles.submissionImage} /> : <div className={styles.coverFallback}><FileCheck2 aria-hidden="true" /></div>}
+        <div><span className={`status ${article.status === "published" ? "published" : article.status === "revision" ? "revision" : article.status === "rejected" ? "rejected" : "review"}`}>{labels[article.status as keyof typeof labels]}</span><h3>{article.title || "Tanpa judul"}</h3><p>{(article.profiles as unknown as { full_name: string } | null)?.full_name ?? "Penulis"} · {(article.categories as unknown as { name: string } | null)?.name ?? "Tanpa kanal"} · {article.location || "Kalimantan Timur"}</p><time dateTime={article.submitted_at ?? undefined}>{article.submitted_at ? new Intl.DateTimeFormat("id-ID", { dateStyle: "medium", timeZone: "Asia/Makassar" }).format(new Date(article.submitted_at)) : "Belum dikirim"}</time></div>
+        <Link className="button" href={`/redaksi/${article.id}`}>Periksa</Link>
+      </article>)}</div> : <div className={styles.empty}><FileCheck2 aria-hidden="true" /><h3>Antrean bersih</h3><p>Tidak ada tulisan dengan status ini.</p></div>}
+    </section>
+    <nav className={styles.pagination} aria-label="Halaman antrean">{page > 1 && <Link href={`/redaksi?status=${active}&page=${page - 1}`}>← Sebelumnya</Link>}{(count ?? 0) > page * 20 && <Link href={`/redaksi?status=${active}&page=${page + 1}`}>Berikutnya →</Link>}</nav>
+  </div></AccountShell>;
 }
