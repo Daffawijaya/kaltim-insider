@@ -8,6 +8,7 @@ import { slugify } from "@/lib/editorial";
 import styles from "@/app/kontributor/profil/profile.module.css";
 
 export function AccountShell({ children, role, className = "" }: { children: ReactNode; role: string; className?: string }) {
+  const editorial = role === "admin" || role === "editor";
   return <div className={`${styles.page} ${className}`}>
     <header className={styles.topbar}><div className={styles.topbarInner}>
       <Link href="/" aria-label="Kaltim Insider"><Image src="/brand/kaltim-insider.png" alt="Kaltim Insider" width={248} height={70} priority /></Link>
@@ -21,11 +22,11 @@ export function AccountShell({ children, role, className = "" }: { children: Rea
           </Link>
           <nav className={styles.accountLinks} aria-label="Menu akun">
             <Link href="/kontributor">Dasbor</Link>
-            <Link href="/kontributor?tab=artikel#dashboard-panel">Kelola Artikel</Link>
+            <Link href={editorial ? "/redaksi" : "/kontributor/artikel"}>Kelola Artikel</Link>
             <Link href="/kontributor/tulis">Tulis Artikel</Link>
-            <Link href="/kontributor?tab=notifikasi#dashboard-panel">Notifikasi</Link>
-            <Link href="/kontributor?tab=kegiatan#dashboard-panel">Kegiatan</Link>
-            <Link href="/kontributor?tab=panduan#dashboard-panel">Panduan &amp; FAQ</Link>
+            <Link href="/kontributor/notifikasi">Notifikasi</Link>
+            <Link href="/kontributor/kegiatan">Kegiatan</Link>
+            <Link href="/kontributor/panduan">Panduan &amp; FAQ</Link>
             {role === "admin" && <Link href="/admin">Kelola Akun</Link>}
           </nav>
           <form action={signOut}><button type="submit">Keluar</button></form>

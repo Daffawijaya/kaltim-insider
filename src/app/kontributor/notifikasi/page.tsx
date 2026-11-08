@@ -1,2 +1,24 @@
-import Link from "next/link"; import {WorkspaceHeader} from "@/components/workspace-header"; import {markNotificationsRead} from "@/app/actions/notifications"; import {requireUser} from "@/lib/dal"; import {createClient} from "@/lib/supabase/server";
-export default async function NotificationsPage(){const user=await requireUser();const supabase=await createClient();const{data,error}=await supabase.from("notifications").select("id,article_id,title,message,read_at,created_at").eq("user_id",user.id).order("created_at",{ascending:false}).limit(50);if(error)throw new Error("Notifikasi belum dapat dimuat.");return <div className="workspace"><WorkspaceHeader label="Notifikasi"/><main className="shell workspace-main"><div className="workspace-title"><div><h1>Kabar dari redaksi</h1><p>Keputusan dan catatan terbaru untuk tulisanmu.</p></div><form action={markNotificationsRead}><button className="button">Tandai sudah dibaca</button></form></div><section className="panel">{data?.length?data.map(item=><Link href={`/kontributor/tulis?id=${item.article_id}`} className={`notification ${item.read_at?"":"unread"}`} key={item.id}><div><strong>{item.title}</strong><p>{item.message}</p></div><small>{new Intl.DateTimeFormat("id-ID",{dateStyle:"medium",timeStyle:"short"}).format(new Date(item.created_at))}</small></Link>):<div className="empty-state"><h3>Belum ada notifikasi</h3></div>}</section></main></div>}
+import Link from "next/link";
+import { Bell, ChevronRight } from "lucide-react";
+import { markNotificationsRead } from "@/app/actions/notifications";
+import { AccountShell } from "@/components/account-shell";
+import { requireUser } from "@/lib/dal";
+import { createClient } from "@/lib/supabase/server";
+import styles from "../dashboard.module.css";
+
+const date = (value: string) => new Intl.DateTimeFormat("id-ID", { dateStyle: "medium", timeStyle: "short" }).format(new Date(value));
+
+export default async function NotificationsPage() {
+  const user = await requireUser();
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("notifications").select("id,article_id,title,message,read_at,created_at").eq("user_id", user.id).order("created_at", { ascending: false }).limit(50);
+  if (error) throw new Error("Notifikasi belum dapat dimuat.");
+
+  return <AccountShell role={user.role} className={styles.dashboard}><div className={styles.main}>
+    <div className={styles.panelHeading}><div><h1>Notifikasi</h1><p>Keputusan dan catatan terbaru untuk tulisanmu.</p></div><Bell aria-hidden="true" /></div>
+    <section className={styles.panel}>
+      {!!data?.some(item => !item.read_at) && <div className={styles.notificationHeading}><form action={markNotificationsRead}><button className="button">Tandai sudah dibaca</button></form></div>}
+      {data?.length ? <div className={styles.notifications}>{data.map(item => <Link href={item.article_id ? `/kontributor/tulis?id=${item.article_id}` : "/kontributor/notifikasi"} className={`${styles.notification} ${!item.read_at ? styles.unread : ""}`} key={item.id}><Bell size={18} aria-hidden="true" /><div><strong>{item.title}</strong>{!item.read_at && <span className={styles.newLabel}>Belum dibaca</span>}<p>{item.message}</p><time dateTime={item.created_at}>{date(item.created_at)}</time></div><ChevronRight size={16} aria-hidden="true" /></Link>)}</div> : <div className={styles.empty}><Bell aria-hidden="true" /><h3>Belum ada notifikasi</h3><p>Kabar dan catatan dari redaksi akan muncul di sini.</p></div>}
+    </section>
+  </div></AccountShell>;
+}

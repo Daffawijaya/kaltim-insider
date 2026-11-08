@@ -70,7 +70,7 @@ export default async function Contributor({ searchParams }: PageProps<"/kontribu
       <div className={styles.layout}>
         <div className={styles.content}>
           <section className={styles.profile} aria-labelledby="profile-heading">
-            <div className={styles.avatar}>{profile.avatar_url ? <DashboardImage src={profile.avatar_url} /> : <span>{profile.full_name?.trim().charAt(0).toUpperCase() || "K"}</span>}</div>
+            <div className={styles.avatar}><DashboardImage src={profile.avatar_url || "/default-profile.jpeg"} /></div>
             <div className={styles.profileCopy}><span className="kicker">{role}</span><h1 id="profile-heading">{profile.full_name}</h1>
               <div className={styles.profileStats}><span><FileText size={16} aria-hidden="true" /> Terbit: <strong>{published.error ? "Belum tersedia" : number(published.count ?? 0)}</strong></span><span><Eye size={16} aria-hidden="true" /> Tayangan: <strong>{views.error ? "Belum tersedia" : number(views.data?.sum ?? 0)}</strong></span></div>
               <p className={styles.bio}>{profile.bio || `Berbagi kabar dan cerita dari ${profile.city || "Kalimantan Timur"}.`}</p>
@@ -78,8 +78,6 @@ export default async function Contributor({ searchParams }: PageProps<"/kontribu
             </div>
             <Link href="/kontributor/profil" className={styles.settings} aria-label="Pengaturan profil"><Settings size={21} /></Link>
           </section>
-
-          <section className={styles.hub} aria-labelledby="hub-heading"><div className={styles.hubMark} aria-hidden="true"><PenLine /></div><h2 id="hub-heading">Pusat Penulis</h2><p>Mulai cerita baru, kelola tulisan, dan ikuti kabar dari redaksi Kaltim Insider dalam satu ruang.</p><Link className="button" href="/kontributor?tab=artikel#dashboard-panel">Kelola Tulisan Saya <ChevronRight size={16} aria-hidden="true" /></Link></section>
 
           <section className={styles.panel} id="dashboard-panel" aria-label="Aktivitas penulis">
             <nav className={styles.tabs} aria-label="Bagian dashboard">{Object.entries(contributorTabs).map(([key, label]) => <Link key={key} href={`/kontributor?tab=${key}#dashboard-panel`} aria-current={tab === key ? "page" : undefined}>{label}</Link>)}</nav>
