@@ -13,7 +13,7 @@ type Category = { id: number; name: string };
 type Draft = { id?: string; title?: string; excerpt?: string; body?: string; location?: string; category_id?: number | null; cover_url?: string | null };
 type EditorSnapshot = { fields: Draft; coverMeta: ArticleImageMeta; blocks: ArticleContentBlock[]; coverFile: File | null; blockFiles: Record<string, File | null> };
 
-export function ArticleEditor({ categories, draft = {}, authorName }: { categories: Category[]; draft?: Draft; authorName: string }) {
+export function ArticleEditor({ categories, draft = {}, authorName, publishDirectly = false }: { categories: Category[]; draft?: Draft; authorName: string; publishDirectly?: boolean }) {
   const initialContent = splitArticleContent(draft.body);
   const key = `neo-draft-${draft.id ?? "new"}`;
   const [coverFile, setCoverFile] = useState<File | null>(null);
@@ -167,7 +167,7 @@ export function ArticleEditor({ categories, draft = {}, authorName }: { categori
 
     <aside className={styles.floatingActions} aria-label="Aksi tulisan">
       <button name="intent" value="draft" formNoValidate disabled={pending || busyImages.size > 0} title="Simpan draf"><Save size={21} /><span>Simpan draf</span></button>
-      <button name="intent" value="submit" className={styles.submit} disabled={pending || busyImages.size > 0} title="Kirim ke redaksi"><Send size={21} /><span>Kirim ke redaksi</span></button>
+      <button name="intent" value="submit" className={styles.submit} disabled={pending || busyImages.size > 0} title={publishDirectly ? "Terbitkan" : "Kirim ke redaksi"}><Send size={21} /><span>{publishDirectly ? "Terbitkan" : "Kirim ke redaksi"}</span></button>
     </aside>
   </form>;
 }

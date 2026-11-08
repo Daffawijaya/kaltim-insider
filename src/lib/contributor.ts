@@ -1,8 +1,8 @@
 import { articleStatuses } from "./editorial.ts";
 
 export const contributorTabs = {
-  notifikasi: "Notifikasi",
   artikel: "Kelola Artikel",
+  notifikasi: "Notifikasi",
   kegiatan: "Kegiatan",
   panduan: "Panduan & FAQ",
 };
@@ -13,7 +13,8 @@ export function contributorParams(params: Record<string, string | string[] | und
   const pageNumber = Number(params.page);
   const page = Number.isSafeInteger(pageNumber) && pageNumber > 0 && pageNumber <= 1_000_000 ? pageNumber : 1;
   const status = articleStatuses.find(status => status === params.status);
-  return { tab, page, status };
+  const scope = params.scope === "review" ? "review" : "mine";
+  return { tab, page, status, scope };
 }
 
 export function contributorArticleSearch(params: Record<string, string | string[] | undefined>) {

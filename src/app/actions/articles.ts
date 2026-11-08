@@ -3,7 +3,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { requireRole, requireUser } from "@/lib/dal";
-import type { ArticleStatus } from "@/lib/editorial";
+import { isEditorialRole, type ArticleStatus } from "@/lib/editorial";
 import { articleContentImages, joinArticleContent, type ArticleContentBlock, type ArticleImageMeta } from "@/lib/article-content";
 import { articleImagePath, staleArticleImage, validWebP } from "@/lib/images";
 import { richTextPlainText } from "@/lib/rich-text";
@@ -93,6 +93,7 @@ export async function saveArticle(_: ArticleState, formData: FormData): Promise<
     coverMeta = imageMetaInput(JSON.parse(String(formData.get("cover_meta") ?? "{}")));
   } catch { return { error: "Informasi gambar atau konten tambahan tidak valid. Muat ulang editor lalu coba lagi." }; }
   const intent = String(formData.get("intent") ?? "draft");
+  const publishDirectly = intent === "submit" && isEditorialRole(profile.role);
   const id = String(formData.get("id") ?? "");
   const { data: existing, error: readError } = id ? await supabase.from("articles").select("cover_url,body,status").eq("id", id).eq("author_id", profile.id).maybeSingle() : { data: null, error: null };
   if (readError || (id && (!existing || !["draft", "revision"].includes(existing.status)))) return { error: "Tulisan tidak tersedia untuk diedit. Muat ulang dashboard.", id };
@@ -142,6 +143,10 @@ export async function saveArticle(_: ArticleState, formData: FormData): Promise<
     }
     return { error: "Tulisan belum tersimpan. Periksa data atau muat ulang untuk melihat status terbaru.", id: id || undefined };
   }
+  if (publishDirectly) {
+    const { error: publishError } = await supabase.rpc("review_article", { target_id: data.id, next_status: "published", expected_status: "submitted", review_note: null, advertorial: false });
+    if (publishError) return { error: "Tulisan tersimpan, tetapi belum dapat diterbitkan otomatis. Buka Redaksi untuk memeriksa statusnya.", id: data.id };
+  }
   const oldImages = new Set(existing ? [existing.cover_url, ...articleContentImages(existing.body)].filter(Boolean) : []);
   const newImages = new Set([input.cover_url, ...blocks.map(block => block.image_url)].filter(Boolean));
   const replaced = [...oldImages].filter(url => !newImages.has(url)).map(url => articleImagePath(String(url), origin, profile.id)).filter((path): path is string => Boolean(path));
@@ -152,7 +157,11 @@ export async function saveArticle(_: ArticleState, formData: FormData): Promise<
   // shortcut: cleanup runs on article saves; add a scheduled worker if another upload path is introduced.
   await cleanupOrphanedImages(supabase, profile.id);
   revalidatePath("/kontributor");
-  if (intent === "submit") redirect("/kontributor?sent=1");
+  if (publishDirectly) {
+    revalidatePath("/");
+    revalidatePath("/artikel", "layout");
+  }
+  if (intent === "submit") redirect("/kontributor?tab=artikel#dashboard-panel");
   return { success: "Draft tersimpan.", id: data.id, categoryId: data.category_id, coverUrl: input.cover_url ?? "", blockUrls: Object.fromEntries(blocks.flatMap(block => block.image_url ? [[block.id, block.image_url]] : [])) };
 }
 

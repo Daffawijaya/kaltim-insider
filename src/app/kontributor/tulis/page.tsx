@@ -4,6 +4,7 @@ import { ChevronLeft } from "lucide-react";
 import { ArticleEditor } from "@/components/article-editor";
 import { AccountShell } from "@/components/account-shell";
 import { requireUser } from "@/lib/dal";
+import { isEditorialRole } from "@/lib/editorial";
 import { createClient } from "@/lib/supabase/server";
 import styles from "./write.module.css";
 
@@ -23,6 +24,6 @@ export default async function WritePage({ searchParams }: PageProps<"/kontributo
     <Link className={styles.back} href="/kontributor"><ChevronLeft size={20}/> Kembali ke Dashboard</Link>
     <div className={styles.title}><span aria-hidden="true"/><h1>{draft ? "Edit Artikel" : "Buat Artikel"}</h1></div>
     {review?.note && <div className="review-note"><strong>Catatan redaksi</strong><p>{review.note}</p></div>}
-    {draft && !["draft", "revision"].includes(draft.status) ? <div className="notice">Tulisan sedang diproses redaksi dan belum dapat diedit.</div> : <ArticleEditor categories={categories ?? []} draft={draft ?? {}} authorName={profile.full_name}/>} 
+    {draft && !["draft", "revision"].includes(draft.status) ? <div className="notice">Tulisan sedang diproses redaksi dan belum dapat diedit.</div> : <ArticleEditor categories={categories ?? []} draft={draft ?? {}} authorName={profile.full_name} publishDirectly={isEditorialRole(profile.role)}/>}
   </div></AccountShell>;
 }

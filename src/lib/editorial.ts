@@ -11,6 +11,10 @@ export const articleStatuses = [
 export type ArticleStatus = (typeof articleStatuses)[number];
 export type UserRole = "contributor" | "editor" | "admin";
 
+export function isEditorialRole(role: string) {
+  return role === "editor" || role === "admin";
+}
+
 export type ArticleRecord = {
   id: string;
   title: string;
