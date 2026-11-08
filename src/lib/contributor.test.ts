@@ -17,7 +17,7 @@ test("Tailwind loader leaves dashboard CSS Modules to Next.js", () => {
 });
 
 test("dashboard validates query parameters and preserves old pagination links", () => {
-  assert.deepEqual(contributorParams({}), { tab: "notifikasi", page: 1, status: undefined, scope: "mine" });
+  assert.deepEqual(contributorParams({}), { tab: "artikel", page: 1, status: undefined, scope: "mine" });
   assert.deepEqual(contributorParams({ page: "2", status: "revision", scope: "review" }), { tab: "artikel", page: 2, status: "revision", scope: "review" });
   for (const page of ["-1", "1.5", "Infinity", "1000001", "invalid"]) {
     assert.equal(contributorParams({ tab: "artikel", page }).page, 1);

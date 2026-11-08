@@ -9,7 +9,7 @@ export const contributorTabs = {
 
 export function contributorParams(params: Record<string, string | string[] | undefined>) {
   const tab = typeof params.tab === "string" && Object.hasOwn(contributorTabs, params.tab)
-    ? params.tab as keyof typeof contributorTabs : params.page ? "artikel" : "notifikasi";
+    ? params.tab as keyof typeof contributorTabs : "artikel";
   const pageNumber = Number(params.page);
   const page = Number.isSafeInteger(pageNumber) && pageNumber > 0 && pageNumber <= 1_000_000 ? pageNumber : 1;
   const status = articleStatuses.find(status => status === params.status);
