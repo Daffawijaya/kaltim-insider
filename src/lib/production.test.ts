@@ -110,11 +110,18 @@ test("orphan cleanup only considers old safe image objects", () => {
 
 test("production requires a public HTTPS site URL", () => {
   const previousUrl = process.env.NEXT_PUBLIC_SITE_URL;
+  const previousVercelProductionUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+  const previousVercelUrl = process.env.VERCEL_URL;
   const previousMode = process.env.NODE_ENV;
   try {
     Object.assign(process.env, { NODE_ENV: "production" });
     delete process.env.NEXT_PUBLIC_SITE_URL;
-    assert.throws(getSiteUrl, /NEXT_PUBLIC_SITE_URL/);
+    delete process.env.VERCEL_PROJECT_PRODUCTION_URL;
+    delete process.env.VERCEL_URL;
+    assert.throws(getSiteUrl, /NEXT_PUBLIC_SITE_URL|Vercel/);
+    process.env.VERCEL_PROJECT_PRODUCTION_URL = "kaltim-insider.vercel.app";
+    assert.equal(getSiteUrl(), "https://kaltim-insider.vercel.app");
+    delete process.env.VERCEL_PROJECT_PRODUCTION_URL;
     for (const value of ["http://localhost:3000", "https://localhost", "https://user:pass@example.com", "https://example.com/path"]) {
       process.env.NEXT_PUBLIC_SITE_URL = value;
       assert.throws(getSiteUrl);
@@ -123,6 +130,8 @@ test("production requires a public HTTPS site URL", () => {
     assert.equal(getSiteUrl(), "https://news.example.com");
   } finally {
     if (previousUrl === undefined) delete process.env.NEXT_PUBLIC_SITE_URL; else process.env.NEXT_PUBLIC_SITE_URL = previousUrl;
+    if (previousVercelProductionUrl === undefined) delete process.env.VERCEL_PROJECT_PRODUCTION_URL; else process.env.VERCEL_PROJECT_PRODUCTION_URL = previousVercelProductionUrl;
+    if (previousVercelUrl === undefined) delete process.env.VERCEL_URL; else process.env.VERCEL_URL = previousVercelUrl;
     if (previousMode === undefined) Reflect.deleteProperty(process.env, "NODE_ENV"); else Object.assign(process.env, { NODE_ENV: previousMode });
   }
 });
