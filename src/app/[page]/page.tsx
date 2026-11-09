@@ -6,7 +6,8 @@ import { legalPages } from "@/lib/legal";
 export function generateStaticParams() { return Object.keys(legalPages).map(page => ({ page })); }
 export async function generateMetadata({ params }: PageProps<"/[page]">) {
   const { page } = await params;
-  return { title: legalPages[page as keyof typeof legalPages]?.title ?? "Halaman tidak ditemukan" };
+  const content = legalPages[page as keyof typeof legalPages];
+  return content ? { title: content.title, description: content.paragraphs[0], alternates: { canonical: `/${page}` } } : { title: "Halaman tidak ditemukan", robots: { index: false, follow: false } };
 }
 export default async function LegalPage({ params }: PageProps<"/[page]">) {
   const { page } = await params;

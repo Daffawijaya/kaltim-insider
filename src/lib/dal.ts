@@ -40,9 +40,9 @@ export async function getPublishedArticles(limit = 30) {
   return (data ?? []) as unknown as PublishedArticle[];
 }
 
-export async function getArticleBySlug(slug: string) {
+export const getArticleBySlug = cache(async (slug: string) => {
   const supabase = await createClient();
   const { data, error } = await supabase.from("articles").select(articleSelect).eq("slug", slug).eq("status", "published").maybeSingle();
   if (error) throw new Error("Berita belum dapat dimuat.");
   return data as unknown as PublishedArticle | null;
-}
+});

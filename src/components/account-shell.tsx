@@ -1,36 +1,19 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, Menu } from "lucide-react";
-import { signOut } from "@/app/actions/auth";
+import { AccountMenu } from "@/components/account-menu";
 import { categories } from "@/lib/data";
+import { getSessionProfile } from "@/lib/dal";
 import { slugify } from "@/lib/editorial";
 import styles from "@/app/kontributor/profil/profile.module.css";
 
-export function AccountShell({ children, role, className = "" }: { children: ReactNode; role: string; className?: string }) {
-  const editorial = role === "admin" || role === "editor";
+export async function AccountShell({ children, role, className = "" }: { children: ReactNode; role: string; className?: string }) {
+  const profile = await getSessionProfile();
   return <div className={`${styles.page} ${className}`}>
     <header className={styles.topbar}><div className={styles.topbarInner}>
       <Link href="/" aria-label="Kaltim Insider"><Image src="/brand/kaltim-insider.png" alt="Kaltim Insider" width={248} height={70} priority /></Link>
       <div className={styles.topbarActions}>
-        <details className={styles.accountMenu}><summary className={styles.menu}>Menu <Menu size={19} /></summary><div>
-          <Link className={styles.accountCard} href="/kontributor/profil">
-            <Image src="/brand/kaltim-insider.png" alt="" width={248} height={70} />
-            <strong>Akun Saya</strong>
-            <span>Kelola profil dan informasi akunmu di Kaltim Insider.</span>
-            <ArrowUpRight aria-hidden="true" />
-          </Link>
-          <nav className={styles.accountLinks} aria-label="Menu akun">
-            <Link href="/kontributor">Dasbor</Link>
-            <Link href={editorial ? "/redaksi" : "/kontributor/artikel"}>Kelola Artikel</Link>
-            <Link href="/kontributor/tulis">Tulis Artikel</Link>
-            <Link href="/kontributor/notifikasi">Notifikasi</Link>
-            <Link href="/kontributor/kegiatan">Kegiatan</Link>
-            <Link href="/kontributor/panduan">Panduan &amp; FAQ</Link>
-            {role === "admin" && <Link href="/admin">Kelola Akun</Link>}
-          </nav>
-          <form action={signOut}><button type="submit">Keluar</button></form>
-        </div></details>
+        <AccountMenu role={role} avatarUrl={profile?.avatar_url} />
       </div>
     </div></header>
     <main className={styles.main}><section className={styles.card}><div className={styles.cardInner}>{children}</div></section></main>

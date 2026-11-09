@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowDownUp, FileText, MoreVertical, Search } from "lucide-react";
 import { AccountShell } from "@/components/account-shell";
+import { AccountPageHeader } from "@/components/account-page-header";
 import { DashboardImage } from "@/components/dashboard-image";
 import { contributorArticleSearch } from "@/lib/contributor";
 import { requireUser } from "@/lib/dal";
@@ -34,8 +35,8 @@ export default async function ArticlesPage({ searchParams }: { searchParams: Pro
   };
 
   return <AccountShell role={user.role} className={styles.dashboard}><div className={styles.main}>
-    <div className={styles.panelHeading}><div><h1>Kelola Artikel</h1><p>Pantau, lanjutkan, dan kelola seluruh tulisanmu.</p></div><FileText aria-hidden="true" /></div>
-    <section className={styles.panel}>
+    <AccountPageHeader title="Kelola Artikel" />
+    <section className={`${styles.panel} ${styles.subpagePanel}`}>
       <nav className={styles.filters} aria-label="Filter status tulisan"><Link href={href(1, "")} aria-current={!active ? "page" : undefined}>Semua</Link>{statuses.map(item => <Link href={href(1, item)} aria-current={item === active ? "page" : undefined} key={item}>{labels[item]}</Link>)}</nav>
       <div className={queue.tools}><form action="/kontributor/artikel">{active && <input type="hidden" name="status" value={active} />}<input type="hidden" name="order" value={oldest ? "oldest" : "newest"} /><label><span className={queue.srOnly}>Cari judul artikel</span><input name="q" defaultValue={query} placeholder="Cari artikel" maxLength={100} /><button type="submit" aria-label="Cari artikel"><Search aria-hidden="true" /></button></label></form><Link className={queue.order} href={href(1, active, !oldest)} aria-label={oldest ? "Urutkan terbaru" : "Urutkan terlama"}><ArrowDownUp aria-hidden="true" /></Link></div>
       {data?.length ? <div className={queue.list}>{data.map(article => <article className={queue.item} key={article.id}>

@@ -1,9 +1,9 @@
 import { articleStatuses } from "./editorial.ts";
 
 export const contributorTabs = {
-  artikel: "Kelola Artikel",
+  artikel: "Kelola Tulisan",
+  kegiatan: "Event",
   notifikasi: "Notifikasi",
-  kegiatan: "Kegiatan",
   panduan: "Panduan & FAQ",
 };
 

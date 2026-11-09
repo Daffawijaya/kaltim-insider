@@ -10,10 +10,11 @@ import { richTextPlainText } from "@/lib/rich-text";
 import styles from "./article-editor.module.css";
 
 type Category = { id: number; name: string };
-type Draft = { id?: string; title?: string; excerpt?: string; body?: string; location?: string; category_id?: number | null; cover_url?: string | null };
+type EventOption = { id: string; title: string };
+type Draft = { id?: string; title?: string; excerpt?: string; body?: string; location?: string; category_id?: number | null; event_id?: string | null; cover_url?: string | null };
 type EditorSnapshot = { fields: Draft; coverMeta: ArticleImageMeta; blocks: ArticleContentBlock[]; coverFile: File | null; blockFiles: Record<string, File | null> };
 
-export function ArticleEditor({ categories, draft = {}, authorName, publishDirectly = false }: { categories: Category[]; draft?: Draft; authorName: string; publishDirectly?: boolean }) {
+export function ArticleEditor({ categories, events, draft = {}, authorName, publishDirectly = false }: { categories: Category[]; events: EventOption[]; draft?: Draft; authorName: string; publishDirectly?: boolean }) {
   const initialContent = splitArticleContent(draft.body);
   const key = `neo-draft-${draft.id ?? "new"}`;
   const [coverFile, setCoverFile] = useState<File | null>(null);
@@ -145,6 +146,7 @@ export function ArticleEditor({ categories, draft = {}, authorName, publishDirec
 
       <div className={styles.fields}>
         <div className="field"><label htmlFor="publisher">Penulis<span>*</span></label><input id="publisher" value={authorName} readOnly /></div>
+        <div className="field"><label htmlFor="event_id">Event yang diikuti</label><select id="event_id" name="event_id" value={fields.event_id ?? ""} onChange={event => change("event_id", event.target.value)}><option value="">Tidak terkait event</option>{events.map(event => <option key={event.id} value={event.id}>{event.title}</option>)}</select>{!events.length && <small className={styles.hint}>Belum ada event aktif yang kamu ikuti.</small>}</div>
         <div className="field"><label htmlFor="category_id">Kanal<span>*</span></label><select id="category_id" name="category_id" value={fields.category_id ?? ""} onChange={event => change("category_id", Number(event.target.value))} required><option value="">Pilih kanal</option>{categories.map(category => <option key={category.id} value={category.id}>{category.name}</option>)}</select></div>
         <div className={`field ${styles.narrowField}`}><label htmlFor="location">Lokasi<span>*</span></label><input id="location" name="location" value={fields.location ?? ""} onChange={event => change("location", event.target.value)} placeholder="Kabupaten/kota" required /></div>
         <div className="field"><label htmlFor="title">Judul artikel<span>*</span></label><input id="title" name="title" value={fields.title ?? ""} onChange={event => change("title", event.target.value)} placeholder="Masukkan judul artikel" maxLength={70} required /><small className={styles.counter}>{String(fields.title ?? "").length}/70</small></div>

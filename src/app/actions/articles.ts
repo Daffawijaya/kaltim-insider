@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { requireRole, requireUser } from "@/lib/dal";
 import { isEditorialRole, type ArticleStatus } from "@/lib/editorial";
+import { localDate } from "@/lib/events";
 import { articleContentImages, joinArticleContent, type ArticleContentBlock, type ArticleImageMeta } from "@/lib/article-content";
 import { articleImagePath, staleArticleImage, validWebP } from "@/lib/images";
 import { richTextPlainText } from "@/lib/rich-text";
@@ -19,6 +20,7 @@ function articleInput(formData: FormData) {
     location: String(formData.get("location") ?? "").trim(),
     cover_url: String(formData.get("cover_url") ?? "").trim() || null,
     category_id: Number(formData.get("category_id")) || null,
+    event_id: String(formData.get("event_id") ?? "").trim() || null,
   };
 }
 
@@ -95,6 +97,12 @@ export async function saveArticle(_: ArticleState, formData: FormData): Promise<
   const intent = String(formData.get("intent") ?? "draft");
   const publishDirectly = intent === "submit" && isEditorialRole(profile.role);
   const id = String(formData.get("id") ?? "");
+  if (input.event_id && !/^[a-f0-9-]{36}$/i.test(input.event_id)) return { error: "Event yang dipilih tidak valid.", id };
+  if (input.event_id) {
+    const today = localDate();
+    const { data: participation, error } = await supabase.from("event_participants").select("events!inner(id)").eq("user_id", profile.id).eq("event_id", input.event_id).lte("events.starts_on", today).gte("events.ends_on", today).maybeSingle();
+    if (error || !participation) return { error: "Event sudah berakhir atau belum kamu ikuti.", id };
+  }
   const { data: existing, error: readError } = id ? await supabase.from("articles").select("cover_url,body,status").eq("id", id).eq("author_id", profile.id).maybeSingle() : { data: null, error: null };
   if (readError || (id && (!existing || !["draft", "revision"].includes(existing.status)))) return { error: "Tulisan tidak tersedia untuk diedit. Muat ulang dashboard.", id };
   const origin = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -160,6 +168,8 @@ export async function saveArticle(_: ArticleState, formData: FormData): Promise<
   if (publishDirectly) {
     revalidatePath("/");
     revalidatePath("/artikel", "layout");
+    revalidatePath("/sitemap.xml");
+    revalidatePath("/news-sitemap.xml");
   }
   if (intent === "submit") redirect("/kontributor?tab=artikel#dashboard-panel");
   return { success: "Draft tersimpan.", id: data.id, categoryId: data.category_id, coverUrl: input.cover_url ?? "", blockUrls: Object.fromEntries(blocks.flatMap(block => block.image_url ? [[block.id, block.image_url]] : [])) };
@@ -180,5 +190,9 @@ export async function reviewArticle(_: ArticleState, formData: FormData): Promis
   revalidatePath("/");
   revalidatePath(`/redaksi/${id}`);
   revalidatePath("/artikel", "layout");
+  if (decision === "published") {
+    revalidatePath("/sitemap.xml");
+    revalidatePath("/news-sitemap.xml");
+  }
   return { success: "Keputusan tersimpan." };
 }

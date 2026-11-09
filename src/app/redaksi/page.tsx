@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowDownUp, BookOpen, FileCheck2, FileText, MoreVertical, Search } from "lucide-react";
 import { AccountShell } from "@/components/account-shell";
+import { AccountPageHeader } from "@/components/account-page-header";
 import { DashboardImage } from "@/components/dashboard-image";
 import { requireRole } from "@/lib/dal";
 import { contributorArticleSearch } from "@/lib/contributor";
@@ -39,8 +40,8 @@ export default async function Editorial({ searchParams }: PageProps<"/redaksi">)
   };
 
   return <AccountShell role={profile.role} className={styles.dashboard}><div className={styles.main}>
-    <div className={styles.panelHeading}><div><h1>Kelola Artikel</h1><p>Kelola tulisan sendiri dan periksa tulisan yang dikirim penulis.</p></div><FileCheck2 aria-hidden="true" /></div>
-    <section className={styles.panel} aria-labelledby="queue-heading">
+    <AccountPageHeader title="Kelola Artikel" />
+    <section className={`${styles.panel} ${styles.subpagePanel}`} aria-labelledby="queue-heading">
       <h2 id="queue-heading" className={queue.srOnly}>{scope === "review" ? "Antrian redaksi" : "Tulisan saya"}</h2>
       <nav className={styles.scopeFilters} aria-label="Ruang kelola artikel"><Link href="/redaksi?scope=review&status=submitted" aria-current={scope === "review" ? "page" : undefined}><BookOpen aria-hidden="true" /><strong>Antrian Redaksi</strong><span>Periksa tulisan penulis</span></Link><Link href="/redaksi?scope=mine" aria-current={scope === "mine" ? "page" : undefined}><FileText aria-hidden="true" /><strong>Tulisan Saya</strong><span>Kelola artikel milikmu</span></Link></nav>
       <nav className={styles.filters} aria-label="Filter status tulisan">{scope === "mine" && <Link href={href(1, "")} aria-current={!active ? "page" : undefined}>Semua</Link>}{statuses.map(item => <Link href={href(1, item)} aria-current={item === active ? "page" : undefined} key={item}>{labels[item]}</Link>)}</nav>
