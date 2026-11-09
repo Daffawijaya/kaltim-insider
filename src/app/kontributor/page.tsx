@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowDownUp, Bell, BookOpen, CalendarDays, ChevronRight, Eye, FileText, PenLine, Search, Sparkles, Trophy, Users, MoreVertical } from "lucide-react";
+import { ArrowDownUp, Bell, BookOpen, CalendarDays, ChevronRight, Eye, FileText, PenLine, Search, Settings, Sparkles, Trophy, Users, MoreVertical } from "lucide-react";
 import { DashboardImage } from "@/components/dashboard-image";
 import { AccountShell } from "@/components/account-shell";
 import { markNotificationsRead } from "@/app/actions/notifications";
@@ -15,6 +15,7 @@ const ownStatuses = ["draft", "published", "archived"] as const;
 const reviewStatuses = ["submitted", "revision", "approved", "published", "rejected", "archived"] as const;
 const date = (value: string) => new Intl.DateTimeFormat("id-ID", { dateStyle: "medium", timeZone: "Asia/Makassar" }).format(new Date(value));
 const number = (value: number) => new Intl.NumberFormat("id-ID").format(value);
+const compact = (value: number) => new Intl.NumberFormat("id-ID", { notation: "compact", maximumFractionDigits: 1 }).format(value);
 
 type SidebarArticle = { id: string; title: string; slug: string; cover_url: string | null; published_at: string | null; view_count: number; categories: { name: string } | null };
 function ArticleList({ articles, error, empty, showViews = false }: { articles: SidebarArticle[]; error: boolean; empty: string; showViews?: boolean }) {
@@ -70,11 +71,10 @@ export default async function Contributor({ searchParams }: PageProps<"/kontribu
         <div className={styles.content}>
           <section className={styles.profile} aria-labelledby="profile-heading">
             <div className={styles.avatar}><DashboardImage src={profile.avatar_url || "/default-profile.jpeg"} /></div>
-            <div className={styles.profileCopy}><span className="kicker">{role}</span><h1 id="profile-heading">{profile.full_name}</h1>
-              <div className={styles.profileStats}><span><FileText size={16} aria-hidden="true" /> Terbit: <strong>{published.error ? "Belum tersedia" : number(published.count ?? 0)}</strong></span><span><Eye size={16} aria-hidden="true" /> Tayangan: <strong>{views.error ? "Belum tersedia" : number(views.data?.sum ?? 0)}</strong></span></div>
+            <div className={styles.profileCopy}><span className="kicker">{role}</span><h1 id="profile-heading">{profile.full_name}</h1><Link className={styles.profileGear} href="/kontributor/profil" aria-label="Pengaturan profil"><Settings size={19} aria-hidden="true" /></Link></div>
+              <div className={styles.profileStats}><span><FileText size={16} aria-hidden="true" /> Terbit: <strong>{published.error ? "Belum tersedia" : number(published.count ?? 0)}</strong></span><span aria-hidden="true">|</span><span><Eye size={16} aria-hidden="true" /> Tayangan: <strong>{views.error ? "Belum tersedia" : compact(views.data?.sum ?? 0)}</strong></span></div>
               <p className={styles.bio}>{profile.bio || `Berbagi kabar dan cerita dari ${profile.city || "Kalimantan Timur"}.`}</p>
               <div className={styles.actions}><Link className="button primary" href="/kontributor/tulis"><PenLine size={18} aria-hidden="true" /> Tulis Artikel</Link><Link className="button" href="/kontributor/profil">Edit Profil<ChevronRight size={16} aria-hidden="true" /></Link></div>
-            </div>
           </section>
 
           <section className={styles.panel} id="dashboard-panel" aria-label="Aktivitas penulis">

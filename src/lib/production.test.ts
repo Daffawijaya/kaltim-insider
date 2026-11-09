@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { accountDetails, otpRequest } from "./auth.ts";
+import { usernameBase, usernameCandidate, sanitizeUsername } from "./username.ts";
 import { ARTICLE_IMAGE_HEIGHT, ARTICLE_IMAGE_WIDTH, PROFILE_IMAGE_SIZE, articleImageCrop, articleImagePath, staleArticleImage, validProfileWebP, validWebP, webPDimensions } from "./images.ts";
 import { getSiteUrl } from "./site-url.ts";
 import { articleStatuses } from "./editorial.ts";
@@ -47,13 +48,27 @@ test("OTP signup may create a user; login cannot create an unknown email", async
   assert.match(form, /Email atau username/);
   assert.match(readFileSync("src/app/actions/auth.ts", "utf8"), /signInWithPassword/);
   assert.match(form, /completeSignup\(form\)/);
-  assert.match(form, /autoComplete="name"/);
+  assert.match(form, /autoComplete="given-name"/);
+  assert.match(form, /autoComplete="family-name"/);
 });
 
-test("signup requires a name and a strong-enough password", () => {
-  assert.deepEqual(accountDetails("  Daffa   Wijaya  ", "rahasia8"), { name: "Daffa Wijaya", password: "rahasia8" });
-  for (const [name, password] of [["D", "rahasia8"], ["Daffa", "pendek1"], ["Daffa", "tanpaangka"], ["Daffa", "12345678"], ["Daffa", "hurufaja "]]) {
-    assert.ok(accountDetails(name, password).error);
+test("username candidates are a slug of the name plus four trailing digits", () => {
+  const seen = new Set<string>();
+  for (let index = 0; index < 50; index += 1) seen.add(usernameCandidate("  Daffa   Wijaya "));
+  for (const candidate of seen) assert.match(candidate, /^daffa-wijaya\d{4}$/);
+  assert.equal(usernameBase("!!!"), "user");
+  assert.equal(usernameCandidate("!!!", () => 0), "user1000");
+  assert.equal(usernameCandidate("José Álvarez", () => 0), "jose-alvarez1000");
+  assert.equal(sanitizeUsername("Budi-Santoso4821".toLowerCase()), "budi-santoso4821");
+  for (const bad of ["ab", "-budi", "budi-", "budi--santoso", "budi santoso", "budi_santoso", ""]) assert.equal(sanitizeUsername(bad), null);
+});
+
+test("signup requires a first name and a strong-enough password", () => {
+  assert.deepEqual(accountDetails("  Daffa   Wijaya  ", "", "rahasia8"), { name: "Daffa Wijaya", first: "Daffa Wijaya", last: "", password: "rahasia8" });
+  assert.deepEqual(accountDetails("Daffa", "Wijaya", "rahasia8"), { name: "Daffa Wijaya", first: "Daffa", last: "Wijaya", password: "rahasia8" });
+  assert.deepEqual(accountDetails("Daffa", "", "rahasia8"), { name: "Daffa", first: "Daffa", last: "", password: "rahasia8" });
+  for (const [first, last, password] of [["D", "", "rahasia8"], ["Daffa", "", "pendek1"], ["Daffa", "", "tanpaangka"], ["Daffa", "", "12345678"], ["Daffa", "", "hurufaja "]]) {
+    assert.ok(accountDetails(first, last, password).error);
   }
 });
 

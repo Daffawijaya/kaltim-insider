@@ -45,7 +45,7 @@ export async function signIn(formData: FormData) {
 }
 
 export async function completeSignup(formData: FormData) {
-  const details = accountDetails(String(formData.get("full_name") ?? ""), String(formData.get("password") ?? ""));
+  const details = accountDetails(String(formData.get("first_name") ?? ""), String(formData.get("last_name") ?? ""), String(formData.get("password") ?? ""));
   if (details.error) return { error: details.error };
   const supabase = await createClient();
   const { data: { user }, error: userError } = await supabase.auth.getUser();

@@ -77,7 +77,7 @@ export function AuthForm({ mode }: { mode: "signin" | "signup" }) {
   if (step === "setup") return <form onSubmit={submit} className="auth-form auth-setup">
     <h2>Selesaikan akunmu</h2>
     <p className="setup-email">{email}</p>
-    <label>Nama lengkap<input name="full_name" autoComplete="name" minLength={2} maxLength={100} required autoFocus /></label>
+    <div className="auth-name-row"><label>Nama depan<input name="first_name" autoComplete="given-name" minLength={2} maxLength={100} required autoFocus /></label><label>Nama belakang<input name="last_name" autoComplete="family-name" maxLength={100} /></label></div>
     <div className="password-rules"><strong>Password harus memiliki:</strong><ul><li>Minimal 8 karakter</li><li>Minimal satu huruf</li><li>Minimal satu angka atau simbol</li></ul></div>
     <label className="password-field">Password<input name="password" type={showPassword ? "text" : "password"} autoComplete="new-password" minLength={8} required /><button type="button" onClick={() => setShowPassword(value => !value)}>{showPassword ? "Sembunyikan password" : "Tampilkan password"}</button></label>
     {state.error && <p className="form-message error" role="alert">{state.error}</p>}

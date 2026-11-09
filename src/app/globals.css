@@ -75,6 +75,8 @@
 .account-footer p{max-width:900px;margin:16px 0 0;color:#777;font-size:11px;line-height:1.5}.account-footer p a{color:#333;text-decoration:underline}
 .account-panel:has(.auth-verify)>.account-kicker,.account-panel:has(.auth-verify)>h1,.account-panel:has(.auth-verify)>.account-intro,.account-panel:has(.auth-setup)>.account-kicker,.account-panel:has(.auth-setup)>h1,.account-panel:has(.auth-setup)>.account-intro{display:none}
 .account-panel:has(.auth-verify),.account-panel:has(.auth-setup){margin-top:54px}
+.auth-name-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.auth-name-row>label{display:block;position:relative;margin:0 0 18px;color:#3b3b3b;font-size:13px;font-weight:700}
+@media(max-width:480px){.auth-name-row{grid-template-columns:1fr}}
 .auth-verify h2,.auth-setup h2{margin:0 0 10px;text-align:center;font-size:28px;line-height:1.2}
 .verify-email{display:block;margin:0 auto 24px;border:0;background:none;color:#333;font-size:14px;font-weight:700;cursor:pointer}
 .verify-email span,.verify-edit{color:var(--account-accent)}
@@ -87,3 +89,28 @@
 @media(max-width:640px){.shell{width:min(100% - 24px,1280px)}.bbc-mast{height:60px}.bbc-logo span{font-size:14px;padding:7px}.bbc-account a{font-size:12px}.bbc-nav>div{height:42px}.bbc-alert{padding:20px 0}.bbc-lead h1{font-size:32px}.footer-links{gap:16px}.footer-social{gap:16px;flex-wrap:wrap}.footer-social strong{width:100%;margin:0}.bbc-ad-space.footer-ad{height:180px}}
 
 .advertorial-label{display:block;width:fit-content;padding:.3rem .5rem;margin:.5rem 0;background:#fff1cb;color:#5b3b00;font:700 .8rem var(--font-sans);border:1px solid #b78017}.review-actions fieldset{border:0;padding:0;margin:0;min-width:0}
+
+/* Mobile UX: collapse editorial layouts, preserve readable controls, and avoid horizontal overflow. */
+@media(max-width:700px){
+  html,body{max-width:100%;overflow-x:hidden}
+  button,input,textarea,select{font-size:16px}
+  .button{min-height:44px}
+  .bbc-mast{grid-template-columns:auto 1fr auto;gap:10px}.bbc-tools{min-width:0}.bbc-account{gap:10px}.bbc-register{padding:10px 12px}.bbc-nav>div{justify-content:flex-start;scrollbar-width:none}
+  .bbc-lead-grid,.bbc-news-layout,.bbc-feature-row{grid-template-columns:1fr}.bbc-lead-image img{height:auto;aspect-ratio:16/9}.bbc-lead-list a{padding-inline:0}
+  .bbc-four,.bbc-more-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.bbc-watch{overflow-x:auto;scroll-snap-type:x mandatory}.bbc-watch article{flex:0 0 72%;scroll-snap-align:start}.watch-image img{height:auto;aspect-ratio:4/5}
+  .listing-page{padding:32px 0 52px}.listing-head{margin-bottom:24px}.listing-head form,.admin-search{display:grid;grid-template-columns:1fr;width:100%}.listing-head form .button,.admin-search .button{width:100%}
+  .review-document{padding:20px}.review-layout{gap:18px}.review-panel button{min-height:44px}
+  .user-row{padding:16px}.user-row form,.user-row select{width:100%}.user-row button{min-height:44px}
+  .notification{align-items:flex-start;flex-direction:column;gap:8px;padding:16px}.notification small{white-space:normal}
+  .auth-card{width:100%}.auth-form input{min-height:48px;font-size:16px}
+  .share-row{align-items:flex-start;flex-wrap:wrap}
+}
+@media(max-width:480px){
+  .shell{width:calc(100% - 24px)}
+  .bbc-logo{gap:3px}.bbc-logo span{font-size:12px;padding:6px}.bbc-account>a:not(:last-child){display:none}
+  .bbc-lead h1{font-size:28px}.bbc-four,.bbc-more-grid{grid-template-columns:1fr}.bbc-watch article{flex-basis:84%}
+  .article-header h1,.article-news-header h1{font-size:30px;overflow-wrap:anywhere}.article-deck{font-size:17px}.article-news-body,.article-body{font-size:16px;line-height:1.75}
+  .contributor-cta{padding:24px 20px}.contributor-cta .button{width:100%}
+  .account-panel{padding:26px 18px 28px}.account-panel h1{font-size:26px}.account-header{width:calc(100% - 24px)}
+  .account-page .password-field input{padding-right:112px}.password-field>button{right:10px}
+}
