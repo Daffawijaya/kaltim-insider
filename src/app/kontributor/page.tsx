@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowDownUp, Bell, BookOpen, CalendarDays, ChevronRight, Eye, FileText, PenLine, Search, Settings, Sparkles, Trophy, Users, MoreVertical } from "lucide-react";
+import { ArrowDownUp, Bell, BookOpen, CalendarDays, ChevronRight, Eye, FileText, PenLine, Search, Sparkles, Trophy, Users, MoreVertical } from "lucide-react";
 import { DashboardImage } from "@/components/dashboard-image";
 import { AccountShell } from "@/components/account-shell";
 import { markNotificationsRead } from "@/app/actions/notifications";
@@ -64,7 +64,6 @@ export default async function Contributor({ searchParams }: PageProps<"/kontribu
     return `/kontributor?${search}#dashboard-panel`;
   };
   const role = profile.role === "admin" ? "Administrator" : profile.role === "editor" ? "Redaktur" : "Penulis";
-  const publicProfile = profile.username ? `/penulis/${encodeURIComponent(profile.username)}` : "/kontributor/profil";
   return <AccountShell role={profile.role} className={styles.dashboard}>
     <div className={styles.main}>
       <div className={styles.layout}>
@@ -74,9 +73,8 @@ export default async function Contributor({ searchParams }: PageProps<"/kontribu
             <div className={styles.profileCopy}><span className="kicker">{role}</span><h1 id="profile-heading">{profile.full_name}</h1>
               <div className={styles.profileStats}><span><FileText size={16} aria-hidden="true" /> Terbit: <strong>{published.error ? "Belum tersedia" : number(published.count ?? 0)}</strong></span><span><Eye size={16} aria-hidden="true" /> Tayangan: <strong>{views.error ? "Belum tersedia" : number(views.data?.sum ?? 0)}</strong></span></div>
               <p className={styles.bio}>{profile.bio || `Berbagi kabar dan cerita dari ${profile.city || "Kalimantan Timur"}.`}</p>
-              <div className={styles.actions}><Link className="button primary" href="/kontributor/tulis"><PenLine size={18} aria-hidden="true" /> Tulis Artikel</Link><Link className="button" href={publicProfile}>{profile.username ? "Lihat Profil" : "Lengkapi Profil"}<ChevronRight size={16} aria-hidden="true" /></Link></div>
+              <div className={styles.actions}><Link className="button primary" href="/kontributor/tulis"><PenLine size={18} aria-hidden="true" /> Tulis Artikel</Link><Link className="button" href="/kontributor/profil">Edit Profil<ChevronRight size={16} aria-hidden="true" /></Link></div>
             </div>
-            <Link href="/kontributor/profil" className={styles.settings} aria-label="Pengaturan profil"><Settings size={21} /></Link>
           </section>
 
           <section className={styles.panel} id="dashboard-panel" aria-label="Aktivitas penulis">
