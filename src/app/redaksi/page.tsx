@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowDownUp, BookOpen, FileCheck2, FileText, MoreVertical, Search } from "lucide-react";
+import { ArrowDownUp, FileCheck2, MoreVertical, Search } from "lucide-react";
 import { AccountShell } from "@/components/account-shell";
 import { AccountPageHeader } from "@/components/account-page-header";
 import { DashboardImage } from "@/components/dashboard-image";
@@ -10,7 +10,7 @@ import styles from "@/app/kontributor/dashboard.module.css";
 import queue from "./queue.module.css";
 
 const ownStatuses = ["draft", "published", "archived"] as const;
-const reviewStatuses = ["submitted", "revision", "approved", "published", "rejected", "archived"] as const;
+const reviewStatuses = ["submitted", "revision", "published", "rejected", "archived"] as const;
 const labels = { draft: "Draf", submitted: "Menunggu", revision: "Perlu revisi", approved: "Disetujui", published: "Terbit", rejected: "Ditolak", archived: "Arsip" };
 const date = (value: string) => new Intl.DateTimeFormat("id-ID", { dateStyle: "medium", timeZone: "Asia/Makassar" }).format(new Date(value));
 
@@ -43,8 +43,10 @@ export default async function Editorial({ searchParams }: PageProps<"/redaksi">)
     <AccountPageHeader title="Kelola Artikel" />
     <section className={`${styles.panel} ${styles.subpagePanel}`} aria-labelledby="queue-heading">
       <h2 id="queue-heading" className={queue.srOnly}>{scope === "review" ? "Antrian redaksi" : "Tulisan saya"}</h2>
-      <nav className={styles.scopeFilters} aria-label="Ruang kelola artikel"><Link href="/redaksi?scope=review&status=submitted" aria-current={scope === "review" ? "page" : undefined}><BookOpen aria-hidden="true" /><strong>Antrian Redaksi</strong><span>Periksa tulisan penulis</span></Link><Link href="/redaksi?scope=mine" aria-current={scope === "mine" ? "page" : undefined}><FileText aria-hidden="true" /><strong>Tulisan Saya</strong><span>Kelola artikel milikmu</span></Link></nav>
-      <nav className={styles.filters} aria-label="Filter status tulisan">{scope === "mine" && <Link href={href(1, "")} aria-current={!active ? "page" : undefined}>Semua</Link>}{statuses.map(item => <Link href={href(1, item)} aria-current={item === active ? "page" : undefined} key={item}>{labels[item]}</Link>)}</nav>
+      <div className={queue.filterBar}>
+        <nav className={styles.filters} aria-label="Filter status tulisan">{scope === "mine" && <Link href={href(1, "")} aria-current={!active ? "page" : undefined}>Semua</Link>}{statuses.map(item => <Link href={href(1, item)} aria-current={item === active ? "page" : undefined} key={item}>{labels[item]}</Link>)}</nav>
+        <nav className={queue.scopeTabs} aria-label="Ruang kelola artikel"><Link href="/redaksi?scope=review&status=submitted" aria-current={scope === "review" ? "page" : undefined}>Antrian Redaksi</Link><Link href="/redaksi?scope=mine" aria-current={scope === "mine" ? "page" : undefined}>Tulisan Saya</Link></nav>
+      </div>
       <div className={queue.tools}><form action="/redaksi"><input type="hidden" name="scope" value={scope} />{active && <input type="hidden" name="status" value={active} />}<input type="hidden" name="order" value={oldest ? "oldest" : "newest"} /><label><span className={queue.srOnly}>Cari judul artikel</span><input name="q" defaultValue={query} placeholder="Cari artikel" maxLength={100} /><button type="submit" aria-label="Cari artikel"><Search aria-hidden="true" /></button></label></form><Link className={queue.order} href={href(1, active, !oldest)} aria-label={oldest ? "Urutkan terbaru" : "Urutkan terlama"}><ArrowDownUp aria-hidden="true" /></Link></div>
       {data?.length ? <div className={queue.list}>{data.map(article => { const articleLink = scope === "review" ? `/redaksi/${article.id}` : `/kontributor/tulis?id=${article.id}`; const author = (article.profiles as unknown as { full_name: string } | null)?.full_name; return <article className={queue.item} key={article.id}>
         {article.cover_url ? <DashboardImage src={article.cover_url} className={queue.image} /> : <div className={queue.fallback}><FileCheck2 aria-hidden="true" /></div>}
