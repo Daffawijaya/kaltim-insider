@@ -1,6 +1,7 @@
 import { AccountPageHeader } from "@/components/account-page-header";
 import { AccountShell } from "@/components/account-shell";
 import { RoleForm } from "@/components/role-form";
+import { Search } from "lucide-react";
 import { requireRole } from "@/lib/dal";
 import { createClient } from "@/lib/supabase/server";
 import styles from "@/app/kontributor/dashboard.module.css";
@@ -16,8 +17,7 @@ export default async function AdminPage({ searchParams }: PageProps<"/admin">) {
     <AccountPageHeader title="Kelola Akun" />
     <section className={`${styles.panel} ${styles.subpagePanel} ${admin.panel}`}>
       <form className={admin.search}>
-        <input name="q" defaultValue={String(q)} placeholder="Cari nama pengguna" aria-label="Cari nama pengguna" />
-        <button className="button">Cari</button>
+        <label><span className={admin.srOnly}>Cari nama pengguna</span><input name="q" defaultValue={String(q)} placeholder="Cari nama pengguna" /><button type="submit" aria-label="Cari pengguna"><Search aria-hidden="true" /></button></label>
       </form>
       <div className={admin.heading}><h2>Pengguna</h2><span>{count ?? 0} akun</span></div>
       <div className={admin.users}>{data?.map(user => <article className={admin.user} key={user.id}>
