@@ -2,6 +2,8 @@ import type {Metadata} from "next";
 import Link from "next/link";
 import {SiteFooter} from "@/components/site-footer";
 import {SiteHeader} from "@/components/site-header";
+import {ImageCard,Headline,SectionTitle,Meta} from "@/components/front-story";
+import {relative} from "@/lib/time";
 import {type Story} from "@/lib/data";
 import {getPublishedArticles} from "@/lib/dal";
 
@@ -11,48 +13,6 @@ export const metadata:Metadata={
   alternates:{canonical:"/"},
   openGraph:{title:"Berita Kaltim Terkini & Kalimantan Timur",description:"Kabar terbaru dan cerita warga dari seluruh Kalimantan Timur.",url:"/"},
 };
-
-const date=(value:string|null)=>value?new Intl.DateTimeFormat("id-ID",{dateStyle:"medium"}).format(new Date(value)):"Hari ini";
-const relative=(value:string|null)=>{
-  if(!value)return "Hari ini";
-  const diff=Date.now()-new Date(value).getTime();
-  const minutes=Math.floor(diff/60000);
-  if(minutes<1)return "baru saja";
-  if(minutes<60)return `${minutes} menit yang lalu`;
-  const hours=Math.floor(minutes/60);
-  if(hours<24)return `${hours} jam yang lalu`;
-  const days=Math.floor(hours/24);
-  if(days<30)return `${days} hari yang lalu`;
-  return date(value);
-};
-
-function Meta({story}:{story:Story}){
-  return <small className="front-meta"><span>{story.publishedAt}</span><span className="front-meta-separator" aria-hidden="true"/><span>{story.category}</span></small>;
-}
-
-function ImageCard({story,className=""}:{story:Story;className?:string}){
-  return <article className={`front-image-card ${className}`}>
-    <Link href={`/artikel/${story.slug}`} className="front-card-image">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={story.image} alt=""/>
-    </Link>
-    <Link href={`/artikel/${story.slug}`}><h2>{story.title}</h2></Link>
-    <p>{story.excerpt}</p>
-    <Meta story={story}/>
-  </article>;
-}
-
-function Headline({story}:{story:Story}){
-  return <article className="front-headline">
-    <Link href={`/artikel/${story.slug}`}><h2>{story.title}</h2></Link>
-    <p>{story.excerpt}</p>
-    <Meta story={story}/>
-  </article>;
-}
-
-function SectionTitle({children}:{children:React.ReactNode}){
-  return <h2 className="front-section-title">{children}</h2>;
-}
 
 export default async function Home(){
   const published=await getPublishedArticles();

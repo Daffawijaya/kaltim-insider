@@ -4,8 +4,9 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
-import { StoryCard } from "@/components/story-card";
+import { ImageCard, Headline, SectionTitle, Meta } from "@/components/front-story";
 import { createClient } from "@/lib/supabase/server";
+import { relative } from "@/lib/time";
 import type { Story } from "@/lib/data";
 
 const getCategory = cache(async (slug: string) => {
@@ -42,6 +43,65 @@ export default async function ChannelPage({ params, searchParams }: PageProps<"/
   if (String(lokasi)) query = query.ilike("location", `%${String(lokasi)}%`);
   const { data, count, error } = await query;
   if (error) throw new Error("Berita belum dapat dimuat.");
-  const stories: Story[] = (data ?? []).filter(article => article.slug).map(article => ({ slug: article.slug!, title: article.title, excerpt: article.excerpt ?? "", category: (article.categories as unknown as { name: string } | null)?.name ?? "Berita", location: article.location ?? "Kalimantan Timur", author: (article.profiles as unknown as { full_name: string } | null)?.full_name ?? "Redaksi", publishedAt: article.published_at ? new Intl.DateTimeFormat("id-ID", { dateStyle: "long" }).format(new Date(article.published_at)) : "", image: article.cover_url ?? "/window.svg", advertorial: article.is_advertorial }));
-  return <><SiteHeader/><main className="shell listing-page"><div className="listing-head"><span className="kicker">Kanal Berita Kalimantan Timur</span><h1>{category.name === "Terbaru" ? "Berita Kaltim Terkini" : `${category.name} Kalimantan Timur`}</h1><p>Kabar terbaru {category.name.toLowerCase()} dari seluruh wilayah Kalimantan Timur.</p><form><input name="lokasi" defaultValue={String(lokasi)} placeholder="Filter kabupaten/kota"/><button className="button">Terapkan</button></form></div><div className="latest-grid">{stories.map(story => <StoryCard story={story} key={story.slug}/>)}</div>{!stories.length && <div className="empty-state"><h2>Belum ada berita</h2></div>}<nav className="pagination">{page > 1 && <Link href={`/kanal/${slug}?page=${page - 1}&lokasi=${encodeURIComponent(String(lokasi))}`}>← Sebelumnya</Link>}{(count ?? 0) > page * 12 && <Link href={`/kanal/${slug}?page=${page + 1}&lokasi=${encodeURIComponent(String(lokasi))}`}>Berikutnya →</Link>}</nav></main><SiteFooter/></>;
+  const stories: Story[] = (data ?? []).filter(article => article.slug).map(article => ({ slug: article.slug!, title: article.title, excerpt: article.excerpt ?? "", category: (article.categories as unknown as { name: string } | null)?.name ?? "Berita", location: article.location ?? "Kalimantan Timur", author: (article.profiles as unknown as { full_name: string } | null)?.full_name ?? "Redaksi", publishedAt: relative(article.published_at), image: article.cover_url ?? "/window.svg", advertorial: article.is_advertorial }));
+  const title = category.name === "Terbaru" ? "Terbaru" : category.name;
+  const lead = stories[0];
+  const rail = stories.slice(1, 3);
+  const latest = stories.slice(3, 9);
+  const more = stories.slice(9);
+  const pageLink = (target: number) => {
+    const params = new URLSearchParams();
+    if (String(lokasi).trim()) params.set("lokasi", String(lokasi).trim());
+    params.set("page", String(target));
+    return `/kanal/${slug}?${params}`;
+  };
+  return <>
+    <SiteHeader/>
+    <main className="front-page section-page">
+      <div className="shell section-shell">
+        <div className="section-head">
+          <h1 className="kanal-title">{title}</h1>
+          <form className="section-filter" role="search">
+            <input type="text" name="lokasi" defaultValue={String(lokasi)} placeholder="Filter kabupaten/kota" aria-label="Filter lokasi"/>
+            <button type="submit">Terapkan</button>
+          </form>
+        </div>
+
+        {lead ? <>
+          <section className="section-virginia" aria-label={`Berita utama ${title}`}>
+            <article className={`section-lead${rail.length ? "" : " section-lead--full"}`}>
+              <div className="section-lead-text">
+                <h2><Link href={`/artikel/${lead.slug}`}>{lead.title}</Link></h2>
+                {lead.excerpt && <p>{lead.excerpt}</p>}
+                <Meta story={lead}/>
+              </div>
+              <Link className="section-lead-media" href={`/artikel/${lead.slug}`} tabIndex={-1} aria-hidden="true">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={lead.image} alt=""/>
+              </Link>
+            </article>
+            {rail.length > 0 && <div className="section-rail">
+              {rail.map(story => <ImageCard story={story} key={story.slug}/>)}
+            </div>}
+          </section>
+
+          {latest.length > 0 && <section className="front-section" aria-label={`Terbaru di ${title}`}>
+            <SectionTitle>Terbaru di {title}</SectionTitle>
+            <div className="front-latest-grid">{latest.map(story => <ImageCard story={story} key={story.slug}/>)}</div>
+          </section>}
+
+          {more.length > 0 && <section className="front-section" aria-label="Lainnya">
+            <SectionTitle>Lainnya</SectionTitle>
+            <div className="front-channel-headlines">{more.map(story => <Headline story={story} key={story.slug}/>)}</div>
+          </section>}
+
+          <nav className="section-pagination" aria-label="Halaman kanal">
+            {page > 1 && <Link href={pageLink(page - 1)}>← Sebelumnya</Link>}
+            {(count ?? 0) > page * 12 && <Link href={pageLink(page + 1)}>Berikutnya →</Link>}
+          </nav>
+        </> : <div className="front-empty"><h2>Belum ada berita</h2><p>Berita kanal ini akan tampil setelah diterbitkan redaksi.</p></div>}
+      </div>
+    </main>
+    <SiteFooter/>
+  </>;
 }
