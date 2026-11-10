@@ -35,7 +35,8 @@ export function AccountMenu({ role, avatarUrl }: { role: string; avatarUrl?: str
       <Link href="/kontributor/notifikasi">Notifikasi</Link>
       <Link href="/kontributor/kegiatan">Event</Link>
       <Link href="/kontributor/panduan">Panduan &amp; FAQ</Link>
-      {role === "admin" && <Link href="/admin">Kelola Akun</Link>}
+      {role === "contributor" && <Link href="/kontributor/redaktur">Ajukan Redaktur</Link>}
+      {role === "admin" && <><Link href="/admin/redaktur">Pengajuan Redaktur</Link><Link href="/admin">Kelola Akun</Link></>}
     </nav>
     <form action={signOut}><button type="submit">Keluar</button></form>
   </div></details>;
