@@ -35,7 +35,7 @@
 /* Article copy, metadata, tags, and supporting sections share the headline measure. */
 .article-news-header,.article-body-after,.article-tags,.article-wide-section{width:min(720px,calc(100% - 32px))}
 .article-news-header h1,.article-meta-row{max-width:none;margin-left:0}
-.article-news-hero figcaption{max-width:780px;margin-left:auto;margin-right:auto}
+.article-news-hero figcaption{max-width:none;width:min(720px,100%);margin-left:auto;margin-right:auto}
 .article-news-hero{width:min(944px,calc(100% - 32px));margin-left:auto;margin-right:auto}
 .article-reading-layout{display:block;width:min(720px,calc(100% - 32px));margin:32px auto 56px}.article-reading-layout>div{width:100%}
 .article-body-after{margin-top:0}
