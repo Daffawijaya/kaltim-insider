@@ -141,22 +141,16 @@
 /* Kanal (section) page — BBC Arts layout */
 .section-shell{padding-top:0}
 .section-shell.section-arts{max-width:1280px}
-.arts-title{margin:22px 0 18px;text-align:center;font-family:var(--font-serif);font-weight:500;font-size:32px;line-height:36px;letter-spacing:-0.32px;color:#202224}
-.section-filter--center{justify-content:center;margin-bottom:26px}
 .arts-hero{position:relative;display:grid}
 .arts-hero-media{display:block;line-height:0;overflow:hidden;background:#e6e8ea}
 .arts-hero-media img{display:block;width:100%;height:480px;object-fit:cover}
 .arts-hero-text{position:absolute;left:0;bottom:0;z-index:2;background:#ffffff;box-sizing:border-box;padding:24px 28px;width:min(527px,calc(100% / 24 * 10))}
-.arts-hero-text h2{font-family:var(--font-serif);font-weight:500;font-size:32px;line-height:36px;letter-spacing:-0.64px;color:#202224;margin:0 0 12px}
+.arts-hero-text h2{font-family:var(--font-serif);font-weight:600;font-size:32px;line-height:36px;letter-spacing:-0.64px;color:#202224;margin:0 0 12px}
 .arts-hero-text a:hover h2{text-decoration:underline}
-.arts-hero-text p{font-family:var(--font-serif);color:#202224;font-size:14px;line-height:18px;margin:0 0 12px}
+.arts-hero-text p{font-family:var(--font-serif);color:#3a3c3e;font-size:14px;line-height:18px;margin:0 0 12px}
 .arts-subrow{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:18px 0 0}
 .arts-subrow .front-image-card:hover img,.arts-hero-media:hover img{opacity:.82}
 .front-empty{padding:56px 16px;text-align:center;color:#545658}.front-empty h2{margin:0 0 8px;color:#202224}
-.section-filter{display:flex;gap:8px}
-.section-filter input{border:1px solid #dadddf;border-radius:8px;padding:9px 12px;font-family:var(--font-sans);font-size:14px;min-width:200px;outline:0;background:#fff}.section-filter input:focus{border-color:#202224}
-.section-filter button{border:1px solid #202224;background:#fff;color:#202224;border-radius:8px;padding:9px 14px;font-family:var(--font-sans);font-size:13px;font-weight:700;cursor:pointer}.section-filter button:hover{background:#202224;color:#fff}
-
 .section-pagination{display:flex;justify-content:flex-end;gap:12px;margin-top:28px}
 .section-pagination a{border:1px solid #202224;border-radius:8px;color:#202224;padding:9px 16px;font-family:var(--font-sans);font-size:13px;font-weight:700}
 .section-pagination a:hover{background:#202224;color:#fff}
@@ -166,9 +160,6 @@
   .arts-subrow{grid-template-columns:1fr}
 }
 @media(max-width:640px){
-  .arts-title{font-size:26px;line-height:30px;margin:18px 0 14px}
   .arts-hero-text h2{font-size:25px;line-height:29px}
-  .section-filter{width:100%}
-  .section-filter input{min-width:0;flex:1}
 }
 .bbc-menu-notched{border:0;background:none;height:42px;display:flex;align-items:center;padding:0 6px;cursor:pointer;border-radius:2px;color:inherit}.bbc-menu-notched img{display:block;height:17px;width:auto}.bbc-menu-notched:hover{background:#f0f0f0}
