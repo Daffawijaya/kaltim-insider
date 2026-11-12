@@ -5,7 +5,6 @@ import Link from "next/link";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { ImageCard, Headline, SectionTitle, Meta } from "@/components/front-story";
-import { ChannelSubNav } from "@/components/channel-subnav";
 import { NewsComposite } from "@/components/news-composite";
 import { createClient } from "@/lib/supabase/server";
 import { relative } from "@/lib/time";
@@ -65,7 +64,6 @@ export default async function ChannelPage({ params, searchParams }: PageProps<"/
   const isNews = slug === "news" || ["daerah","ekonomi","pendidikan","kesehatan","teknologi","lingkungan","wisata-budaya"].includes(slug);
   return <>
     <SiteHeader/>
-    {isNews && <ChannelSubNav slug={slug} />}
     <main className={isNews && slug === "news" ? "front-page section-page section-news" : "front-page section-page"}>
       <div className="shell section-shell section-arts">
 
