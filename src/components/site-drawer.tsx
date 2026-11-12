@@ -7,7 +7,7 @@ import { drawerMenu } from "@/lib/data";
 
 export function SiteDrawer({ open, onClose, isActive }: { open: boolean; onClose(): void; isActive(path: string): boolean }) {
   const input = useRef<HTMLInputElement>(null);
-  const [expanded, setExpanded] = useState<string | null>(() => drawerMenu.find(item => item.sub?.some(sub => isActive(sub.href)))?.href ?? null);
+  const [expanded, setExpanded] = useState<string | null>(() => drawerMenu.find(item => item.sub?.some(sub => isActive(sub.href)) || isActive(item.href))?.href ?? null);
 
   useEffect(() => {
     if (!open) return;
@@ -17,7 +17,7 @@ export function SiteDrawer({ open, onClose, isActive }: { open: boolean; onClose
     document.body.style.overflow = "hidden";
     const timer = window.setTimeout(() => input.current?.focus(), 220);
     return () => { document.removeEventListener("keydown", onKey); document.body.style.overflow = previous; window.clearTimeout(timer); };
-  }, [open, onClose, isActive]);
+  }, [open, onClose]);
 
   return <div className={`drawer ${open ? "open" : ""}`} aria-hidden={!open}>
     <button type="button" className="drawer-overlay" onClick={onClose} aria-label="Tutup menu" tabIndex={open ? 0 : -1} />
@@ -31,11 +31,13 @@ export function SiteDrawer({ open, onClose, isActive }: { open: boolean; onClose
       <nav className="drawer-nav" aria-label="Kanal utama">
         {drawerMenu.map(item => item.sub ? (
           <div key={item.href} className="drawer-group">
-            <button type="button" className="drawer-item drawer-item-toggle" aria-expanded={expanded === item.href} aria-controls={`drawer-sub-${item.label.replace(/\W+/g, "-")}`} onClick={() => setExpanded(expanded === item.href ? null : item.href)}>
-              <span>{item.label}</span><ChevronDown size={17} strokeWidth={2} className="drawer-chevron" aria-hidden="true" />
-            </button>
+            <div className="drawer-item-row">
+              <Link className="drawer-item drawer-item-link" href={item.href} onClick={onClose} aria-current={isActive(item.href) ? "page" : undefined}>{item.label}</Link>
+              <button type="button" className="drawer-item-toggle" aria-expanded={expanded === item.href} aria-controls={`drawer-sub-${item.label.replace(/\W+/g, "-")}`} aria-label={`${expanded === item.href ? "Tutup" : "Buka"} sub-kanal ${item.label}`} onClick={() => setExpanded(expanded === item.href ? null : item.href)}>
+                <ChevronDown size={17} strokeWidth={2} className="drawer-chevron" aria-hidden="true" />
+              </button>
+            </div>
             <div id={`drawer-sub-${item.label.replace(/\W+/g, "-")}`} className={`drawer-subitems${expanded === item.href ? " open" : ""}`} role="list">
-              <Link className="drawer-subitem drawer-subitem-all" href={item.href} onClick={onClose} aria-current={isActive(item.href) ? "page" : undefined}>Semua {item.label}</Link>
               {item.sub.map(sub => <Link key={sub.href} className="drawer-subitem" href={sub.href} onClick={onClose} aria-current={isActive(sub.href) ? "page" : undefined}>{sub.label}</Link>)}
             </div>
           </div>
