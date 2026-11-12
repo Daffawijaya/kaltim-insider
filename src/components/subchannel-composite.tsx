@@ -12,19 +12,19 @@ function section(heading: string, slug: string, stories: Story[], layout: Compos
   if (!stories.length) return null;
   const shown = stories.slice(0, layout === "list" ? 4 : layout === "two" ? 2 : 3);
   const head = <div className="front-section-title news-section-head"><h2>{heading}</h2><Link className="news-section-more" href={`/kanal/${slug}`}>Lihat semua <span aria-hidden="true">›</span></Link></div>;
-  if (layout === "featured") return <section className="front-section news-section" aria-label={heading}>
+  if (layout === "featured") return <section key={slug} className="front-section news-section" aria-label={heading}>
     {head}
     <div className="news-featured"><ImageCard story={shown[0]} /><div className="news-featured-aside">{shown.slice(1).map(s => <Headline story={s} key={s.slug}/>)}</div></div>
   </section>;
-  if (layout === "two") return <section className="front-section news-section" aria-label={heading}>
+  if (layout === "two") return <section key={slug} className="front-section news-section" aria-label={heading}>
     {head}
     <div className="news-two">{shown.map(s => <ImageCard story={s} key={s.slug}/>)}</div>
   </section>;
-  if (layout === "three") return <section className="front-section news-section" aria-label={heading}>
+  if (layout === "three") return <section key={slug} className="front-section news-section" aria-label={heading}>
     {head}
     <div className="news-three">{shown.map(s => <ImageCard story={s} key={s.slug}/>)}</div>
   </section>;
-  return <section className="front-section news-section" aria-label={heading}>
+  return <section key={slug} className="front-section news-section" aria-label={heading}>
     {head}
     <div className="news-list">{shown.map(s => <Headline story={s} key={s.slug}/>)}</div>
   </section>;
