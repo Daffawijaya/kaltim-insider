@@ -9,12 +9,23 @@ import { createClient } from "@/lib/supabase/server";
 import { relative } from "@/lib/time";
 import type { Story } from "@/lib/data";
 
-const getCategory = cache(async (slug: string) => {
+type CategoryResult = { id?: string | number; name: string; ids?: string[] } | null;
+
+const getCategory = cache(async (slug: string): Promise<CategoryResult> => {
   if (slug === "terbaru" || slug === "news") return { id: undefined, name: "News" };
   const supabase = await createClient();
+  if (slug === "bisnis" || slug === "gaya-hidup") {
+    const children = slug === "bisnis"
+      ? ["bisnis", "umkm", "industri", "pasar", "ikn"]
+      : ["gaya-hidup", "kuliner", "wisata", "fashion", "hiburan"];
+    const { data: rows, error: errorIds } = await supabase.from("categories").select("id,slug,name").in("slug", children);
+    if (errorIds || !rows?.length) throw new Error("Kanal belum dapat dimuat.");
+    const parent = rows.find(row => row.slug === slug);
+    return { id: undefined, name: parent?.name ?? (slug === "bisnis" ? "Bisnis" : "Gaya Hidup"), ids: rows.map(row => String(row.id)) };
+  }
   const { data, error } = await supabase.from("categories").select("id,name").eq("slug", slug).maybeSingle();
   if (error) throw new Error("Kanal belum dapat dimuat.");
-  return data;
+  return data ? { id: data.id, name: data.name } : null;
 });
 
 export async function generateMetadata({ params, searchParams }: PageProps<"/kanal/[slug]">): Promise<Metadata> {
@@ -38,7 +49,8 @@ export default async function ChannelPage({ params, searchParams }: PageProps<"/
   const from = (page - 1) * 12;
   const supabase = await createClient();
   let query = supabase.from("articles").select("title,slug,excerpt,location,cover_url,is_advertorial,published_at,profiles!articles_author_id_fkey(full_name),categories(name)", { count: "exact" }).eq("status", "published").order("published_at", { ascending: false }).range(from, from + 11);
-  if (category.id) query = query.eq("category_id", category.id);
+  if (category.ids) query = query.in("category_id", category.ids);
+  else if (category.id) query = query.eq("category_id", category.id);
   const { data, count, error } = await query;
   if (error) throw new Error("Berita belum dapat dimuat.");
   const stories: Story[] = (data ?? []).filter(article => article.slug).map(article => ({ slug: article.slug!, title: article.title, excerpt: article.excerpt ?? "", category: (article.categories as unknown as { name: string } | null)?.name ?? "Berita", location: article.location ?? "Kalimantan Timur", author: (article.profiles as unknown as { full_name: string } | null)?.full_name ?? "Redaksi", publishedAt: relative(article.published_at), image: article.cover_url ?? "/window.svg", advertorial: article.is_advertorial }));

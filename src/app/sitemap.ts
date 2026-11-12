@@ -12,7 +12,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   if (error) throw new Error("Sitemap belum dapat dimuat.");
   const articles = data ?? [];
   const newest = articles[0]?.updated_at ? new Date(articles[0].updated_at) : undefined;
-  const channels = new Set<string>(["news"]);
+  const channels = new Set<string>(["news", "bisnis", "gaya-hidup"]);
   const authors = new Map<string, Date>();
   for (const article of articles) {
     const category = article.categories as unknown as { slug: string } | null;
