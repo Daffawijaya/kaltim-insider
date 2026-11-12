@@ -155,6 +155,9 @@ a.drawer-item:hover,a.drawer-item-link:hover,button.drawer-item-toggle:hover{bac
 .drawer-subitems .drawer-subitem:nth-child(7){transition-delay:.21s}
 .drawer-subitem:hover{background:#1a1a1a;color:#f3cc1d}
 .drawer-subitem[aria-current]{color:#ffffff;box-shadow:inset 5px 0 #f3cc1d;font-weight:700}
+.drawer-group:has(> .drawer-subitems.open) .drawer-item-row .drawer-item,
+.drawer-group:has(> .drawer-subitems.open) .drawer-item-toggle{border-bottom:0}
+.drawer-group:has(> .drawer-subitems.open) .drawer-subitem:last-child{border-bottom:1px solid #242424}
 .drawer-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 @media (prefers-reduced-motion:reduce){.drawer-overlay,.drawer-panel{transition:none}}
 
