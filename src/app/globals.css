@@ -158,7 +158,7 @@ a.drawer-item:hover,a.drawer-item-link:hover,button.drawer-item-toggle:hover{bac
 .drawer-group:has(> .drawer-subitems.open) .drawer-item-row .drawer-item,
 .drawer-group:has(> .drawer-subitems.open) .drawer-item-toggle{border-bottom:0}
 .drawer-group:has(> .drawer-subitems.open) .drawer-subitem:last-child{border-bottom:1px solid #242424}
-.section-news .section-shell{padding-top:22px}
+.section-news.front-page{padding-top:8px}.section-news .section-shell{padding-top:0}.section-news .news-composite>.news-section:first-child{padding-top:12px}
 .news-composite{padding-bottom:32px}
 .news-section{padding-top:30px}
 .news-section-head{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:18px}
