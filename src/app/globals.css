@@ -137,14 +137,22 @@
 a.drawer-item:hover,a.drawer-item-link:hover,button.drawer-item-toggle:hover{background:#1a1a1a;color:#f3cc1d}
 .drawer-item-row{display:flex;align-items:stretch}
 .drawer-item-row .drawer-item{flex:1;min-width:0}
-.drawer-item-toggle{flex:none;width:54px;display:grid;place-items:center;border:0;border-bottom:1px solid #242424;background:#0e0e0e;color:inherit;cursor:pointer}
+.drawer-item-toggle{flex:none;width:54px;display:grid;place-items:center;border:0;border-bottom:1px solid #242424;background:#0e0e0e;color:#ffffff;cursor:pointer}
 .drawer-item[aria-current]{font-weight:800;color:#ffffff;box-shadow:inset 5px 0 #f3cc1d}
 .drawer-item-toggle[aria-expanded="true"]{color:#f3cc1d}
-.drawer-chevron{transition:transform .25s ease}
+.drawer-chevron{transition:transform .3s cubic-bezier(.32,.72,.24,1)}
 .drawer-item-toggle[aria-expanded="true"] .drawer-chevron{transform:rotate(180deg)}
-.drawer-subitems{display:none}
-.drawer-subitems.open{display:block}
-.drawer-subitem{display:flex;align-items:center;min-height:46px;padding:0 18px 0 42px;border-bottom:1px solid #242424;background:#080808;color:#e6e8ea;font-family:var(--font-sans),Arial,sans-serif;font-size:14px;font-weight:500;text-decoration:none}
+.drawer-subitems{max-height:0;overflow:hidden;transition:max-height .36s cubic-bezier(.32,.72,.24,1)}
+.drawer-subitems.open{max-height:480px}
+.drawer-subitem{display:flex;align-items:center;min-height:46px;padding:0 18px 0 42px;border:0;background:#0e0e0e;color:#e6e8ea;font-family:var(--font-sans),Arial,sans-serif;font-size:14px;font-weight:500;text-decoration:none;opacity:0;transform:translateY(-6px);transition:opacity .28s ease,transform .32s cubic-bezier(.32,.72,.24,1),background .2s ease,color .2s ease}
+.drawer-subitems.open .drawer-subitem{opacity:1;transform:translateY(0)}
+.drawer-subitems .drawer-subitem:nth-child(1){transition-delay:.03s}
+.drawer-subitems .drawer-subitem:nth-child(2){transition-delay:.06s}
+.drawer-subitems .drawer-subitem:nth-child(3){transition-delay:.09s}
+.drawer-subitems .drawer-subitem:nth-child(4){transition-delay:.12s}
+.drawer-subitems .drawer-subitem:nth-child(5){transition-delay:.15s}
+.drawer-subitems .drawer-subitem:nth-child(6){transition-delay:.18s}
+.drawer-subitems .drawer-subitem:nth-child(7){transition-delay:.21s}
 .drawer-subitem:hover{background:#1a1a1a;color:#f3cc1d}
 .drawer-subitem[aria-current]{color:#ffffff;box-shadow:inset 5px 0 #f3cc1d;font-weight:700}
 .drawer-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
