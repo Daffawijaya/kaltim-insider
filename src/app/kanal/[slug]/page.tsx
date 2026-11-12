@@ -10,7 +10,7 @@ import { relative } from "@/lib/time";
 import type { Story } from "@/lib/data";
 
 const getCategory = cache(async (slug: string) => {
-  if (slug === "terbaru") return { id: undefined, name: "Terbaru" };
+  if (slug === "terbaru" || slug === "news") return { id: undefined, name: "News" };
   const supabase = await createClient();
   const { data, error } = await supabase.from("categories").select("id,name").eq("slug", slug).maybeSingle();
   if (error) throw new Error("Kanal belum dapat dimuat.");
@@ -23,7 +23,7 @@ export async function generateMetadata({ params, searchParams }: PageProps<"/kan
   const category = await getCategory(slug);
   if (!category) return {};
   const page = Math.max(1, Number(rawPage) || 1);
-  const name = category.name === "Terbaru" ? "Berita Kaltim Terkini" : `Berita ${category.name} Kaltim`;
+  const name = `Berita ${category.name} Kaltim`;
   const description = `${name} dan Kalimantan Timur terbaru, akurat, serta relevan dari Kaltim Insider.`;
   const canonical = `/kanal/${slug}${page > 1 ? `?page=${page}` : ""}`;
   return { title: page > 1 ? `${name} - Halaman ${page}` : name, description, alternates: { canonical }, openGraph: { title: name, description, url: canonical } };
@@ -42,7 +42,7 @@ export default async function ChannelPage({ params, searchParams }: PageProps<"/
   const { data, count, error } = await query;
   if (error) throw new Error("Berita belum dapat dimuat.");
   const stories: Story[] = (data ?? []).filter(article => article.slug).map(article => ({ slug: article.slug!, title: article.title, excerpt: article.excerpt ?? "", category: (article.categories as unknown as { name: string } | null)?.name ?? "Berita", location: article.location ?? "Kalimantan Timur", author: (article.profiles as unknown as { full_name: string } | null)?.full_name ?? "Redaksi", publishedAt: relative(article.published_at), image: article.cover_url ?? "/window.svg", advertorial: article.is_advertorial }));
-  const title = category.name === "Terbaru" ? "Terbaru" : category.name;
+  const title = category.name === "Terbaru" ? "News" : category.name;
   const lead = stories[0];
   const rail = stories.slice(1, 3);
   const latest = stories.slice(3, 9);

@@ -19,7 +19,7 @@ export function SiteDrawer({ open, onClose, isActive }: { open: boolean; onClose
     return () => { document.removeEventListener("keydown", onKey); document.body.style.overflow = previous; window.clearTimeout(timer); };
   }, [open, onClose]);
 
-  const items = [{ href: "/", label: "Beranda" }, { href: "/kanal/terbaru", label: "Terbaru" }, ...categories.map(category => ({ href: `/kanal/${slugify(category)}`, label: category }))];
+  const items = [{ href: "/", label: "Beranda" }, ...categories.map(category => ({ href: `/kanal/${slugify(category)}`, label: category }))];
 
   return <div className={`drawer ${open ? "open" : ""}`} aria-hidden={!open}>
     <button type="button" className="drawer-overlay" onClick={onClose} aria-label="Tutup menu" tabIndex={open ? 0 : -1} />

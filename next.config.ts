@@ -11,6 +11,11 @@ const nextConfig: NextConfig = {
       },
     },
   },
+  async redirects() {
+    return [
+      { source: "/kanal/terbaru", destination: "/kanal/news", permanent: true },
+    ];
+  },
 };
 
 export default nextConfig;
