@@ -166,6 +166,22 @@ a.drawer-item:hover,a.drawer-item-link:hover,button.drawer-item-toggle:hover{bac
 .section-subnav-inner a.active{color:#000;border-bottom-color:#0e0e0e}
 @media(max-width:640px){.section-subnav-inner a{min-height:44px;padding:0 12px;font-size:12px}}
 .section-news .section-shell{padding-top:22px}
+.news-composite{padding-bottom:32px}
+.news-section{padding-top:30px}
+.news-section-head{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:18px}
+.news-section-head>h2{margin:0;font:inherit;color:inherit}
+.news-section-more{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;font-family:var(--font-sans);font-size:13px;font-weight:700;color:#202224;padding:6px 0;border-bottom:2px solid transparent}
+.news-section-more:hover{color:#000;border-bottom-color:#0e0e0e}
+.news-featured{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:18px;align-items:start}
+.news-featured-aside{display:grid;grid-auto-flow:row;border-left:1px solid #e6e8ea;padding-left:18px}
+.news-featured-aside .front-headline{padding-bottom:12px;margin:0 0 12px;border-bottom:1px solid #e6e8ea}
+.news-featured-aside .front-headline:last-child{border-bottom:0;padding-bottom:0;margin-bottom:0}
+.news-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.news-three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.news-list{display:grid;grid-template-columns:1fr;gap:0}
+.news-list .front-headline{padding-bottom:12px;margin:0 0 12px;border-bottom:1px solid #e6e8ea}
+.news-list .front-headline:last-child{border-bottom:0}
+@media(max-width:900px){.news-featured{grid-template-columns:1fr}.news-featured-aside{border-left:0;padding-left:0;border-top:1px solid #e6e8ea;padding-top:16px}.news-two,.news-three{grid-template-columns:1fr}}
 .news-virginia{display:grid;grid-template-columns:repeat(24,minmax(0,1fr));column-gap:16px;row-gap:24px;align-items:start;border-bottom:1px solid #8a8c8e;padding-bottom:20px}
 .news-london{grid-column:1/span 18;display:grid;grid-template-columns:repeat(24,minmax(0,1fr));column-gap:16px;align-items:start}
 .news-london-text{grid-column:1/span 8;display:grid;gap:12px;align-content:start;padding-top:12px}

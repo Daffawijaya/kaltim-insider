@@ -6,6 +6,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { ImageCard, Headline, SectionTitle, Meta } from "@/components/front-story";
 import { ChannelSubNav } from "@/components/channel-subnav";
+import { NewsComposite } from "@/components/news-composite";
 import { createClient } from "@/lib/supabase/server";
 import { relative } from "@/lib/time";
 import type { Story } from "@/lib/data";
@@ -62,14 +63,14 @@ export default async function ChannelPage({ params, searchParams }: PageProps<"/
   const more = stories.slice(9);
   const pageLink = (target: number) => `/kanal/${slug}?page=${target}`;
   const isNews = slug === "news" || ["daerah","ekonomi","pendidikan","kesehatan","teknologi","lingkungan","wisata-budaya"].includes(slug);
-  const railCards = () => rail.map(story => <ImageCard story={story} key={story.slug} />);
   return <>
     <SiteHeader/>
     {isNews && <ChannelSubNav slug={slug} />}
-    <main className={isNews ? "front-page section-page section-news" : "front-page section-page"}>
+    <main className={isNews && slug === "news" ? "front-page section-page section-news" : "front-page section-page"}>
       <div className="shell section-shell section-arts">
 
-        {lead ? <>
+        {slug === "news" ? <NewsComposite /> : lead ? <>
+          {" " /* sub-channel pages keep their previous layout */}
           {isNews ? (
             <section className="news-virginia" aria-label={`Berita utama ${title}`}>
               <article className="news-london">
@@ -84,7 +85,7 @@ export default async function ChannelPage({ params, searchParams }: PageProps<"/
                 </Link>
               </article>
               {rail.length > 0 && <div className="news-dundee">
-                {railCards()}
+                {rail.map(story => <ImageCard story={story} key={story.slug} />)}
               </div>}
             </section>
           ) : (
