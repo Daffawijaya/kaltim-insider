@@ -5,6 +5,7 @@ import Link from "next/link";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { ImageCard, Headline, SectionTitle, Meta } from "@/components/front-story";
+import { ChannelSubNav } from "@/components/channel-subnav";
 import { createClient } from "@/lib/supabase/server";
 import { relative } from "@/lib/time";
 import type { Story } from "@/lib/data";
@@ -60,27 +61,45 @@ export default async function ChannelPage({ params, searchParams }: PageProps<"/
   const latest = stories.slice(3, 9);
   const more = stories.slice(9);
   const pageLink = (target: number) => `/kanal/${slug}?page=${target}`;
+  const isNews = slug === "news" || ["daerah","ekonomi","pendidikan","kesehatan","teknologi","lingkungan","wisata-budaya"].includes(slug);
+  const railCards = () => rail.map(story => <ImageCard story={story} key={story.slug} />);
   return <>
     <SiteHeader/>
-    <main className="front-page section-page">
+    {isNews && <ChannelSubNav slug={slug} />}
+    <main className={isNews ? "front-page section-page section-news" : "front-page section-page"}>
       <div className="shell section-shell section-arts">
 
         {lead ? <>
-          <section className="arts-hero" aria-label={`Berita utama ${title}`}>
-            <Link className="arts-hero-media" href={`/artikel/${lead.slug}`} aria-label={lead.title}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={lead.image} alt=""/>
-            </Link>
-            <div className="arts-hero-text">
-              <h2><Link href={`/artikel/${lead.slug}`}>{lead.title}</Link></h2>
-              {lead.excerpt && <p>{lead.excerpt}</p>}
-              <Meta story={lead}/>
-            </div>
-          </section>
-
-          {rail.length > 0 && <div className="arts-subrow">
-            {rail.map(story => <ImageCard story={story} key={story.slug}/>)}
-          </div>}
+          {isNews ? (
+            <section className="news-virginia" aria-label={`Berita utama ${title}`}>
+              <article className="news-london">
+                <div className="news-london-text">
+                  <h2><Link href={`/artikel/${lead.slug}`}>{lead.title}</Link></h2>
+                  {lead.excerpt && <p>{lead.excerpt}</p>}
+                  <Meta story={lead}/>
+                </div>
+                <Link className="news-london-media" href={`/artikel/${lead.slug}`} aria-label={lead.title}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={lead.image} alt=""/>
+                </Link>
+              </article>
+              {rail.length > 0 && <div className="news-dundee">
+                {railCards()}
+              </div>}
+            </section>
+          ) : (
+            <section className="arts-hero" aria-label={`Berita utama ${title}`}>
+              <Link className="arts-hero-media" href={`/artikel/${lead.slug}`} aria-label={lead.title}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={lead.image} alt=""/>
+              </Link>
+              <div className="arts-hero-text">
+                <h2><Link href={`/artikel/${lead.slug}`}>{lead.title}</Link></h2>
+                {lead.excerpt && <p>{lead.excerpt}</p>}
+                <Meta story={lead}/>
+              </div>
+            </section>
+          )}
 
           {latest.length > 0 && <section className="front-section" aria-label={`Terbaru di ${title}`}>
             <SectionTitle>Terbaru di {title}</SectionTitle>
