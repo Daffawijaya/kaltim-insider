@@ -6,6 +6,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { ImageCard, Headline, SectionTitle, Meta } from "@/components/front-story";
 import { SubchannelComposite, type CompositeSection } from "@/components/subchannel-composite";
+import { SportComposite } from "@/components/sport-composite";
 import { createClient } from "@/lib/supabase/server";
 import { relative } from "@/lib/time";
 import type { Story } from "@/lib/data";
@@ -86,12 +87,13 @@ export default async function ChannelPage({ params, searchParams }: PageProps<"/
     ],
   };
   const composite = composites[slug];
+  const sport = slug === "olahraga";
   return <>
     <SiteHeader/>
-    <main className={composite ? "front-page section-page section-news section-composite" : "front-page section-page"}>
+    <main className={composite || sport ? "front-page section-page section-news section-composite section-sport" : "front-page section-page"}>
       <div className="shell section-shell section-arts">
 
-        {composite ? <SubchannelComposite sections={composite} /> : lead ? <>
+        {sport ? <SportComposite /> : composite ? <SubchannelComposite sections={composite} /> : lead ? <>
           {" " /* sub-channel pages keep their previous layout */}
           {isNews ? (
             <section className="news-virginia" aria-label={`Berita utama ${title}`}>
