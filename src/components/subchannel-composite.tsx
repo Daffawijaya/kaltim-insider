@@ -4,9 +4,11 @@ import { createClient } from "@/lib/supabase/server";
 import { relative } from "@/lib/time";
 import type { Story } from "@/lib/data";
 
+export type CompositeSection = { heading: string; slug: string; category: string | string[]; layout: "featured" | "two" | "three" | "list" };
+
 type Row = { title: string; slug: string | null; excerpt: string | null; location: string | null; cover_url: string | null; is_advertorial: boolean | null; published_at: string | null; profiles: unknown; categories: unknown };
 
-function section(heading: string, slug: string, stories: Story[], layout: "featured" | "two" | "three" | "list") {
+function section(heading: string, slug: string, stories: Story[], layout: CompositeSection["layout"]) {
   if (!stories.length) return null;
   const shown = stories.slice(0, layout === "list" ? 4 : layout === "two" ? 2 : 3);
   const head = <div className="front-section-title news-section-head"><h2>{heading}</h2><Link className="news-section-more" href={`/kanal/${slug}`}>Lihat semua <span aria-hidden="true">›</span></Link></div>;
@@ -28,9 +30,9 @@ function section(heading: string, slug: string, stories: Story[], layout: "featu
   </section>;
 }
 
-export async function NewsComposite() {
+export async function SubchannelComposite({ sections }: { sections: CompositeSection[] }) {
   const supabase = await createClient();
-  const { data, error } = await supabase.from("articles").select("title,slug,excerpt,location,cover_url,is_advertorial,published_at,profiles!articles_author_id_fkey(full_name),categories(name,slug)").eq("status", "published").not("slug", "is", null).order("published_at", { ascending: false }).range(0, 83);
+  const { data, error } = await supabase.from("articles").select("title,slug,excerpt,location,cover_url,is_advertorial,published_at,profiles!articles_author_id_fkey(full_name),categories(name,slug)").eq("status", "published").not("slug", "is", null).order("published_at", { ascending: false }).range(0, 99);
   if (error) throw new Error("Berita belum dapat dimuat.");
   const stories: Story[] = (data ?? []).map((row: Row) => {
     const rawProfiles = row.profiles as unknown as { full_name?: string } | { full_name?: string }[] | null | undefined;
@@ -39,14 +41,11 @@ export async function NewsComposite() {
     const category = (Array.isArray(rawCategories) ? rawCategories[0]?.name : rawCategories?.name) ?? "Berita";
     return { slug: row.slug!, title: row.title, excerpt: row.excerpt ?? "", category, location: row.location ?? "Kalimantan Timur", author, publishedAt: relative(row.published_at), image: row.cover_url ?? "/window.svg", advertorial: row.is_advertorial ?? false };
   });
-  const byCat = (name: string) => stories.filter(s => s.category === name);
-  return <div className="news-composite">
-    {section("Daerah", "daerah", byCat("Daerah"), "featured")}
-    {section("Ekonomi", "ekonomi", byCat("Ekonomi"), "two")}
-    {section("Pendidikan", "pendidikan", byCat("Pendidikan"), "featured")}
-    {section("Kesehatan", "kesehatan", byCat("Kesehatan"), "list")}
-    {section("Teknologi", "teknologi", byCat("Teknologi"), "three")}
-    {section("Lingkungan", "lingkungan", byCat("Lingkungan"), "featured")}
-    {section("Wisata & Budaya", "wisata-budaya", byCat("Wisata & Budaya"), "three")}
+  const byCat = (names: string | string[]) => {
+    const list = Array.isArray(names) ? names : [names];
+    return stories.filter(s => list.includes(s.category));
+  };
+  return <div className="news-composite composite-page">
+    {sections.map(s => section(s.heading, s.slug, byCat(s.category), s.layout))}
   </div>;
 }

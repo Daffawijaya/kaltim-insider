@@ -5,7 +5,7 @@ import Link from "next/link";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { ImageCard, Headline, SectionTitle, Meta } from "@/components/front-story";
-import { NewsComposite } from "@/components/news-composite";
+import { SubchannelComposite, type CompositeSection } from "@/components/subchannel-composite";
 import { createClient } from "@/lib/supabase/server";
 import { relative } from "@/lib/time";
 import type { Story } from "@/lib/data";
@@ -62,12 +62,36 @@ export default async function ChannelPage({ params, searchParams }: PageProps<"/
   const more = stories.slice(9);
   const pageLink = (target: number) => `/kanal/${slug}?page=${target}`;
   const isNews = slug === "news" || ["daerah","ekonomi","pendidikan","kesehatan","teknologi","lingkungan","wisata-budaya"].includes(slug);
+  const composites: Record<string, CompositeSection[]> = {
+    news: [
+      { heading: "Daerah", slug: "daerah", category: "Daerah", layout: "featured" },
+      { heading: "Ekonomi", slug: "ekonomi", category: "Ekonomi", layout: "two" },
+      { heading: "Pendidikan", slug: "pendidikan", category: "Pendidikan", layout: "featured" },
+      { heading: "Kesehatan", slug: "kesehatan", category: "Kesehatan", layout: "list" },
+      { heading: "Teknologi", slug: "teknologi", category: "Teknologi", layout: "three" },
+      { heading: "Lingkungan", slug: "lingkungan", category: "Lingkungan", layout: "featured" },
+      { heading: "Wisata & Budaya", slug: "wisata-budaya", category: "Wisata & Budaya", layout: "three" },
+    ],
+    bisnis: [
+      { heading: "UMKM", slug: "umkm", category: "UMKM", layout: "featured" },
+      { heading: "IKN", slug: "ikn", category: "IKN", layout: "two" },
+      { heading: "Pasar & Keuangan", slug: "pasar", category: "Pasar & Keuangan", layout: "three" },
+      { heading: "Industri & ESDM", slug: "industri", category: "Industri & ESDM", layout: "list" },
+    ],
+    "gaya-hidup": [
+      { heading: "Kuliner", slug: "kuliner", category: "Kuliner", layout: "featured" },
+      { heading: "Wisata", slug: "wisata", category: "Wisata", layout: "list" },
+      { heading: "Fashion", slug: "fashion", category: "Fashion", layout: "featured" },
+      { heading: "Hiburan", slug: "hiburan", category: "Hiburan", layout: "two" },
+    ],
+  };
+  const composite = composites[slug];
   return <>
     <SiteHeader/>
-    <main className={isNews && slug === "news" ? "front-page section-page section-news" : "front-page section-page"}>
+    <main className={composite ? "front-page section-page section-news section-composite" : "front-page section-page"}>
       <div className="shell section-shell section-arts">
 
-        {slug === "news" ? <NewsComposite /> : lead ? <>
+        {composite ? <SubchannelComposite sections={composite} /> : lead ? <>
           {" " /* sub-channel pages keep their previous layout */}
           {isNews ? (
             <section className="news-virginia" aria-label={`Berita utama ${title}`}>
@@ -110,10 +134,12 @@ export default async function ChannelPage({ params, searchParams }: PageProps<"/
             <div className="front-channel-headlines">{more.map(story => <Headline story={story} key={story.slug}/>)}</div>
           </section>}
 
-          <nav className="section-pagination" aria-label="Halaman kanal">
-            {page > 1 && <Link href={pageLink(page - 1)}>← Sebelumnya</Link>}
-            {(count ?? 0) > page * 12 && <Link href={pageLink(page + 1)}>Berikutnya →</Link>}
-          </nav>
+          {composite ? null : (
+            <nav className="section-pagination" aria-label="Halaman kanal">
+              {page > 1 && <Link href={pageLink(page - 1)}>← Sebelumnya</Link>}
+              {(count ?? 0) > page * 12 && <Link href={pageLink(page + 1)}>Berikutnya →</Link>}
+            </nav>
+          )}
         </> : <div className="front-empty"><h2>Belum ada berita</h2><p>Berita kanal ini akan tampil setelah diterbitkan redaksi.</p></div>}
       </div>
     </main>
