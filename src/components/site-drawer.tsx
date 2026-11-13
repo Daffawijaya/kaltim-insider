@@ -7,7 +7,7 @@ import { drawerMenu } from "@/lib/data";
 
 export function SiteDrawer({ open, onClose, isActive }: { open: boolean; onClose(): void; isActive(path: string): boolean }) {
   const input = useRef<HTMLInputElement>(null);
-  const [expanded, setExpanded] = useState<string | null>(() => drawerMenu.find(item => item.sub?.some(sub => isActive(sub.href)) || isActive(item.href))?.href ?? null);
+  const [expanded, setExpanded] = useState<string | null>(null);
 
   useEffect(() => {
     if (!open) return;
@@ -32,7 +32,7 @@ export function SiteDrawer({ open, onClose, isActive }: { open: boolean; onClose
         {drawerMenu.map(item => item.sub ? (
           <div key={item.href} className="drawer-group">
             <div className="drawer-item-row">
-              <Link className="drawer-item drawer-item-link" href={item.href} onClick={onClose} aria-current={isActive(item.href) ? "page" : undefined}>{item.label}</Link>
+              <Link className="drawer-item drawer-item-link" href={item.href} onClick={onClose} aria-current={isActive(item.href) || item.sub?.some(sub => isActive(sub.href)) ? "page" : undefined}>{item.label}</Link>
               <button type="button" className="drawer-item-toggle" aria-expanded={expanded === item.href} aria-controls={`drawer-sub-${item.label.replace(/\W+/g, "-")}`} aria-label={`${expanded === item.href ? "Tutup" : "Buka"} sub-kanal ${item.label}`} onClick={() => setExpanded(expanded === item.href ? null : item.href)}>
                 <ChevronDown size={17} strokeWidth={2} className="drawer-chevron" aria-hidden="true" />
               </button>
