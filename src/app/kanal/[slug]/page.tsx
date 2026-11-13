@@ -7,6 +7,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { ImageCard, Headline, SectionTitle, Meta } from "@/components/front-story";
 import { SubchannelComposite, type CompositeSection } from "@/components/subchannel-composite";
 import { SportComposite } from "@/components/sport-composite";
+import { SubkanalSections, type SubkanalVariant } from "@/components/subkanal-layout";
 import { createClient } from "@/lib/supabase/server";
 import { relative } from "@/lib/time";
 import type { Story } from "@/lib/data";
@@ -58,11 +59,13 @@ export default async function ChannelPage({ params, searchParams }: PageProps<"/
   const stories: Story[] = (data ?? []).filter(article => article.slug).map(article => ({ slug: article.slug!, title: article.title, excerpt: article.excerpt ?? "", category: (article.categories as unknown as { name: string } | null)?.name ?? "Berita", location: article.location ?? "Kalimantan Timur", author: (article.profiles as unknown as { full_name: string } | null)?.full_name ?? "Redaksi", publishedAt: relative(article.published_at), image: article.cover_url ?? "/window.svg", advertorial: article.is_advertorial }));
   const title = category.name === "Terbaru" ? "News" : category.name;
   const lead = stories[0];
-  const rail = stories.slice(1, 3);
   const latest = stories.slice(3, 9);
   const more = stories.slice(9);
   const pageLink = (target: number) => `/kanal/${slug}?page=${target}`;
-  const isNews = slug === "news" || ["daerah","ekonomi","pendidikan","kesehatan","teknologi","lingkungan","wisata-budaya"].includes(slug);
+  const pagination = <nav className="section-pagination" aria-label="Halaman kanal">
+    {page > 1 && <Link href={pageLink(page - 1)}>← Sebelumnya</Link>}
+    {(count ?? 0) > page * 12 && <Link href={pageLink(page + 1)}>Berikutnya →</Link>}
+  </nav>;
   const composites: Record<string, CompositeSection[]> = {
     news: [
       { heading: "Daerah", slug: "daerah", category: "Daerah", layout: "featured" },
@@ -88,43 +91,46 @@ export default async function ChannelPage({ params, searchParams }: PageProps<"/
   };
   const composite = composites[slug];
   const sport = slug === "olahraga";
+  // Sub-kanal pages each get their own layout arrangement (unique hero × latest × more combo).
+  const subkanalVariants: Record<string, SubkanalVariant> = {
+    daerah: { hero: "virginia", latest: "grid3", more: "headlines" },
+    ekonomi: { hero: "top", latest: "grid2", more: "headlines" },
+    pendidikan: { hero: "split", latest: "list", more: "headlines" },
+    kesehatan: { hero: "editorial", latest: "grid3", more: "cards" },
+    teknologi: { hero: "overlay", latest: "grid2", more: "headlines" },
+    lingkungan: { hero: "virginia", latest: "list", more: "cards" },
+    "wisata-budaya": { hero: "overlay", latest: "featured-aside", more: "cards" },
+    umkm: { hero: "split", latest: "grid3", more: "headlines" },
+    industri: { hero: "top", latest: "list", more: "cards" },
+    pasar: { hero: "virginia", latest: "grid2", more: "headlines" },
+    ikn: { hero: "editorial", latest: "grid2", more: "headlines" },
+    kuliner: { hero: "overlay", latest: "grid3", more: "headlines" },
+    wisata: { hero: "editorial", latest: "featured-aside", more: "headlines" },
+    fashion: { hero: "top", latest: "grid3", more: "cards" },
+    hiburan: { hero: "split", latest: "grid2", more: "headlines" },
+  };
+  const subkanal = subkanalVariants[slug];
   return <>
     <SiteHeader/>
     <main className={composite || sport ? "front-page section-page section-news section-composite section-sport" : "front-page section-page"}>
       <div className="shell section-shell section-arts">
 
-        {sport ? <SportComposite /> : composite ? <SubchannelComposite sections={composite} /> : lead ? <>
-          {" " /* sub-channel pages keep their previous layout */}
-          {isNews ? (
-            <section className="news-virginia" aria-label={`Berita utama ${title}`}>
-              <article className="news-london">
-                <div className="news-london-text">
-                  <h2><Link href={`/artikel/${lead.slug}`}>{lead.title}</Link></h2>
-                  {lead.excerpt && <p>{lead.excerpt}</p>}
-                  <Meta story={lead}/>
-                </div>
-                <Link className="news-london-media" href={`/artikel/${lead.slug}`} aria-label={lead.title}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={lead.image} alt=""/>
-                </Link>
-              </article>
-              {rail.length > 0 && <div className="news-dundee">
-                {rail.map(story => <ImageCard story={story} key={story.slug} />)}
-              </div>}
-            </section>
-          ) : (
-            <section className="arts-hero" aria-label={`Berita utama ${title}`}>
-              <Link className="arts-hero-media" href={`/artikel/${lead.slug}`} aria-label={lead.title}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={lead.image} alt=""/>
-              </Link>
-              <div className="arts-hero-text">
-                <h2><Link href={`/artikel/${lead.slug}`}>{lead.title}</Link></h2>
-                {lead.excerpt && <p>{lead.excerpt}</p>}
-                <Meta story={lead}/>
-              </div>
-            </section>
-          )}
+        {sport ? <SportComposite /> : composite ? <SubchannelComposite sections={composite} /> : subkanal ? <>
+          {" " /* sub-kanal pages each use their own layout variant */}
+          <SubkanalSections variant={subkanal} stories={stories} title={title}/>
+          {pagination}
+        </> : lead ? <>
+          <section className="arts-hero" aria-label={`Berita utama ${title}`}>
+            <Link className="arts-hero-media" href={`/artikel/${lead.slug}`} aria-label={lead.title}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={lead.image} alt=""/>
+            </Link>
+            <div className="arts-hero-text">
+              <h2><Link href={`/artikel/${lead.slug}`}>{lead.title}</Link></h2>
+              {lead.excerpt && <p>{lead.excerpt}</p>}
+              <Meta story={lead}/>
+            </div>
+          </section>
 
           {latest.length > 0 && <section className="front-section" aria-label={`Terbaru di ${title}`}>
             <SectionTitle>Terbaru di {title}</SectionTitle>
@@ -136,12 +142,7 @@ export default async function ChannelPage({ params, searchParams }: PageProps<"/
             <div className="front-channel-headlines">{more.map(story => <Headline story={story} key={story.slug}/>)}</div>
           </section>}
 
-          {composite ? null : (
-            <nav className="section-pagination" aria-label="Halaman kanal">
-              {page > 1 && <Link href={pageLink(page - 1)}>← Sebelumnya</Link>}
-              {(count ?? 0) > page * 12 && <Link href={pageLink(page + 1)}>Berikutnya →</Link>}
-            </nav>
-          )}
+          {pagination}
         </> : <div className="front-empty"><h2>Belum ada berita</h2><p>Berita kanal ini akan tampil setelah diterbitkan redaksi.</p></div>}
       </div>
     </main>
