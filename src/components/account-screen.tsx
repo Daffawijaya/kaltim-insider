@@ -1,4 +1,3 @@
-import {legalPages} from "@/lib/legal";
 import Image from "next/image";
 import Link from "next/link";
 import {AuthForm} from "@/components/auth-form";
@@ -15,10 +14,5 @@ export function AccountScreen({mode}:{mode:"signin"|"signup"}){
       <p className="account-intro">{mode==="signin"?"Lanjutkan menulis dan berbagi kabar dari Kalimantan Timur.":"Daftar untuk mulai mengirim tulisan dan cerita dari daerahmu."}</p>
       <AuthForm mode={mode}/>
     </section>
-    <footer className="account-footer">
-      <Link href="/">Pelajari lebih lanjut tentang akun Kaltim Insider</Link>
-      <nav aria-label="Tautan akun">{Object.entries(legalPages).map(([path,item])=><Link href={`/${path}`} key={path}>{item.title}</Link>)}</nav>
-      <p>Hak cipta © 2026 Kaltim Insider. Kaltim Insider tidak bertanggung jawab atas isi situs eksternal. <Link href="/tautan-eksternal">Baca kebijakan tautan eksternal kami.</Link></p>
-    </footer>
   </main>
 }

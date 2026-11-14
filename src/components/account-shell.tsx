@@ -5,7 +5,7 @@ import { AccountMenu } from "@/components/account-menu";
 import { categories } from "@/lib/data";
 import { getSessionProfile } from "@/lib/dal";
 import { slugify } from "@/lib/editorial";
-import styles from "@/app/kontributor/profil/profile.module.css";
+import styles from "@/app/dashboard/profil/profile.module.css";
 
 export async function AccountShell({ children, role, className = "" }: { children: ReactNode; role: string; className?: string }) {
   const profile = await getSessionProfile();

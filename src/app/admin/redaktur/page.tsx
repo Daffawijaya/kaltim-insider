@@ -3,8 +3,8 @@ import { AccountShell } from "@/components/account-shell";
 import { EditorReviewForm } from "@/components/editor-review-form";
 import { requireRole } from "@/lib/dal";
 import { createClient } from "@/lib/supabase/server";
-import dashboard from "@/app/kontributor/dashboard.module.css";
-import styles from "@/app/kontributor/redaktur/editor-application.module.css";
+import dashboard from "@/app/dashboard/dashboard.module.css";
+import styles from "@/app/dashboard/redaktur/editor-application.module.css";
 
 export default async function EditorApplicationsAdminPage() {
   const admin = await requireRole(["admin"]);

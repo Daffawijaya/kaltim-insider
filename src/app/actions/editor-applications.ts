@@ -31,7 +31,7 @@ export async function submitEditorApplication(_: EditorApplicationState, formDat
   if (second.error) { await supabase.storage.from("editor-applications").remove([certificatePath]); return { error: "KTP belum dapat diunggah." }; }
   const { error } = await supabase.from("editor_applications").insert({ user_id:user.id, ...input.value, certificate_path:certificatePath, identity_path:identityPath });
   if (error) { await supabase.storage.from("editor-applications").remove([certificatePath,identityPath]); return { error: "Pengajuan belum dapat dikirim. Coba lagi." }; }
-  revalidatePath("/kontributor/redaktur"); revalidatePath("/admin/redaktur");
+  revalidatePath("/dashboard/redaktur"); revalidatePath("/admin/redaktur");
   return { success: "Pengajuan berhasil dikirim dan menunggu pemeriksaan admin." };
 }
 
@@ -47,6 +47,6 @@ export async function reviewEditorApplication(_: EditorApplicationState, formDat
   const { error } = await supabase.rpc("review_editor_application", { application_id:id, decision, note });
   if (error) return { error: "Keputusan belum dapat disimpan. Muat ulang lalu coba lagi." };
   if (data.identity_path) await supabase.storage.from("editor-applications").remove([data.identity_path]);
-  revalidatePath("/admin/redaktur"); revalidatePath("/admin"); revalidatePath("/kontributor");
+  revalidatePath("/admin/redaktur"); revalidatePath("/admin"); revalidatePath("/dashboard");
   return { success: decision === "approved" ? "Pengajuan diterima dan akses redaktur aktif." : "Pengajuan ditolak." };
 }

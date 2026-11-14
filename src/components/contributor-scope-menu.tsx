@@ -22,8 +22,8 @@ export function ContributorScopeMenu({ scope }: { scope: "review" | "mine" }) {
   return <details ref={menu} className={styles.menu}>
     <summary>{scope === "review" ? "Antrian Redaksi" : "Tulisan Saya"}<ChevronDown size={15} aria-hidden="true" /></summary>
     <div>
-      <Link href="/kontributor?tab=artikel&scope=review&status=submitted#dashboard-panel" aria-current={scope === "review" ? "page" : undefined}>Antrian Redaksi{scope === "review" && <Check size={15} aria-hidden="true" />}</Link>
-      <Link href="/kontributor?tab=artikel&scope=mine#dashboard-panel" aria-current={scope === "mine" ? "page" : undefined}>Tulisan Saya{scope === "mine" && <Check size={15} aria-hidden="true" />}</Link>
+      <Link href="/dashboard?tab=artikel&scope=review&status=submitted#dashboard-panel" aria-current={scope === "review" ? "page" : undefined}>Antrian Redaksi{scope === "review" && <Check size={15} aria-hidden="true" />}</Link>
+      <Link href="/dashboard?tab=artikel&scope=mine#dashboard-panel" aria-current={scope === "mine" ? "page" : undefined}>Tulisan Saya{scope === "mine" && <Check size={15} aria-hidden="true" />}</Link>
     </div>
   </details>;
 }

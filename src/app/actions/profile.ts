@@ -42,7 +42,7 @@ export async function updateProfile(_: ProfileState, formData: FormData): Promis
     return { error: "Profil belum tersimpan. Coba lagi beberapa saat." };
   }
   if (!data) return { error: "Profil belum tersimpan. Coba lagi beberapa saat." };
-  revalidatePath("/kontributor/profil");
-  revalidatePath("/kontributor");
-  redirect("/kontributor/profil?saved=1");
+  revalidatePath("/dashboard/profil");
+  revalidatePath("/dashboard");
+  redirect("/dashboard/profil?saved=1");
 }

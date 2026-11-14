@@ -4,7 +4,7 @@ import { RoleForm } from "@/components/role-form";
 import { Search } from "lucide-react";
 import { requireRole } from "@/lib/dal";
 import { createClient } from "@/lib/supabase/server";
-import styles from "@/app/kontributor/dashboard.module.css";
+import styles from "@/app/dashboard/dashboard.module.css";
 import admin from "./admin.module.css";
 
 export default async function AdminPage({ searchParams }: PageProps<"/admin">) {

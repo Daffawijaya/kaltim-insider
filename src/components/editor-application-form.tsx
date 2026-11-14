@@ -2,7 +2,7 @@
 
 import { useActionState } from "react";
 import { submitEditorApplication, type EditorApplicationState } from "@/app/actions/editor-applications";
-import styles from "@/app/kontributor/redaktur/editor-application.module.css";
+import styles from "@/app/dashboard/redaktur/editor-application.module.css";
 
 const currentYear = new Date().getFullYear();
 

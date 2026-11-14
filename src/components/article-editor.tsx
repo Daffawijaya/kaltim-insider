@@ -9,7 +9,43 @@ import { emptyArticleImageMeta, splitArticleContent, type ArticleContentBlock, t
 import { richTextPlainText } from "@/lib/rich-text";
 import styles from "./article-editor.module.css";
 
-type Category = { id: number; name: string };
+type Category = { id: number; name: string; slug: string };
+// Channel taxonomy: parents are "News", "Bisnis", "Gaya Hidup"; children are their sub-kanal.
+// Parent rows are shown as group labels only — the composites read children names,
+// so articles tagged to a parent would not appear on the kanal pages.
+const KANAL_GROUPS: ReadonlyArray<{ parent: string; slugs: ReadonlyArray<string> }> = [
+  { parent: "news", slugs: ["daerah", "ekonomi", "pendidikan", "kesehatan", "teknologi", "lingkungan", "wisata-budaya"] },
+  { parent: "bisnis", slugs: ["umkm", "industri", "pasar", "ikn"] },
+  { parent: "gaya-hidup", slugs: ["kuliner", "wisata", "fashion", "hiburan"] },
+];
+const KANAL_TOP_LEVEL = ["olahraga", "opini"]; // standalone kanal without sub-kanal
+const KANAL_HIDDEN_PARENTS = ["news", "bisnis", "gaya-hidup"]; // used as group labels only
+
+type KanalGroup = { label: string; children: Category[] };
+
+function childrenOf(categories: Category[], slugs: ReadonlyArray<string>): Category[] {
+  return categories.filter(category => slugs.indexOf(category.slug) !== -1);
+}
+
+function buildKanalGroups(categories: Category[]): { groups: KanalGroup[]; standalone: Category[]; rest: Category[] } {
+  const groups = KANAL_GROUPS
+    .map(group => ({ label: parentNameOf(categories, group.parent), children: childrenOf(categories, group.slugs) }))
+    .filter(group => group.children.length > 0);
+  const standalone = childrenOf(categories, KANAL_TOP_LEVEL);
+  const used = KANAL_GROUPS.flatMap(group => group.slugs).concat(KANAL_TOP_LEVEL, KANAL_HIDDEN_PARENTS);
+  const rest = categories.filter(category => used.indexOf(category.slug) === -1);
+  return { groups, standalone, rest };
+}
+
+function parentNameOf(categories: Category[], slug: string): string {
+  const parent = categories.find(category => category.slug === slug);
+  return parent ? parent.name : slug;
+}
+
+function KanalSelect({ id, categories, value, onChange }: { id: string; categories: Category[]; value: number | ""; onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void }) {
+  const { groups, standalone, rest } = buildKanalGroups(categories);
+  return <select id={id} name="category_id" value={value} onChange={onChange} required><option value="">Pilih kanal</option>{groups.map(group => <optgroup key={group.label} label={group.label}>{group.children.map(category => <option key={category.id} value={category.id}>{category.name}</option>)}</optgroup>)}{standalone.map(category => <option key={category.id} value={category.id}>{category.name}</option>)}{rest.length > 0 && <optgroup label="Lainnya">{rest.map(category => <option key={category.id} value={category.id}>{category.name}</option>)}</optgroup>}</select>;
+}
 type EventOption = { id: string; title: string };
 type Draft = { id?: string; title?: string; excerpt?: string; body?: string; location?: string; category_id?: number | null; event_id?: string | null; cover_url?: string | null };
 type EditorSnapshot = { fields: Draft; coverMeta: ArticleImageMeta; blocks: ArticleContentBlock[]; coverFile: File | null; blockFiles: Record<string, File | null> };
@@ -147,7 +183,7 @@ export function ArticleEditor({ categories, events, draft = {}, authorName, publ
       <div className={styles.fields}>
         <div className="field"><label htmlFor="publisher">Penulis<span>*</span></label><input id="publisher" value={authorName} readOnly /></div>
         <div className="field"><label htmlFor="event_id">Event yang diikuti</label><select id="event_id" name="event_id" value={fields.event_id ?? ""} onChange={event => change("event_id", event.target.value)}><option value="">Tidak terkait event</option>{events.map(event => <option key={event.id} value={event.id}>{event.title}</option>)}</select>{!events.length && <small className={styles.hint}>Belum ada event aktif yang kamu ikuti.</small>}</div>
-        <div className="field"><label htmlFor="category_id">Kanal<span>*</span></label><select id="category_id" name="category_id" value={fields.category_id ?? ""} onChange={event => change("category_id", Number(event.target.value))} required><option value="">Pilih kanal</option>{categories.map(category => <option key={category.id} value={category.id}>{category.name}</option>)}</select></div>
+        <div className="field"><label htmlFor="category_id">Kanal<span>*</span></label><KanalSelect id="category_id" categories={categories} value={fields.category_id ?? ""} onChange={event => change("category_id", Number(event.target.value))} /></div>
         <div className={`field ${styles.narrowField}`}><label htmlFor="location">Lokasi<span>*</span></label><input id="location" name="location" value={fields.location ?? ""} onChange={event => change("location", event.target.value)} placeholder="Kabupaten/kota" required /></div>
         <div className="field"><label htmlFor="title">Judul artikel<span>*</span></label><input id="title" name="title" value={fields.title ?? ""} onChange={event => change("title", event.target.value)} placeholder="Masukkan judul artikel" maxLength={70} required /><small className={styles.counter}>{String(fields.title ?? "").length}/70</small></div>
         <div className="field"><label htmlFor="excerpt">Ringkasan<span>*</span></label><textarea id="excerpt" name="excerpt" value={fields.excerpt ?? ""} onChange={event => change("excerpt", event.target.value)} placeholder="Jelaskan inti kabar dalam 1–2 kalimat" required /></div>

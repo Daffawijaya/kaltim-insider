@@ -2,7 +2,7 @@
 
 import { useActionState } from "react";
 import { reviewEditorApplication, type EditorApplicationState } from "@/app/actions/editor-applications";
-import styles from "@/app/kontributor/redaktur/editor-application.module.css";
+import styles from "@/app/dashboard/redaktur/editor-application.module.css";
 
 export function EditorReviewForm({ id }: { id: string }) {
   const [state, action, pending] = useActionState(reviewEditorApplication, {} as EditorApplicationState);

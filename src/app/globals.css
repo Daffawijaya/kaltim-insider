@@ -47,46 +47,44 @@
 @media(max-width:640px){.article-reading-layout{margin:26px auto 44px}.article-content-block{margin:44px auto}.article-content-block h2{font-size:27px;line-height:1.2;margin-bottom:18px}.article-news-body{line-height:1.7}.article-more>article{grid-template-columns:1fr}.article-more img{width:100%;height:auto}.article-wide-section>h2{font-size:24px}}
 
 /* Account entry follows the contributor dashboard's white-and-red identity. */
-.account-page{--account-accent:#ed2227;min-height:100vh;background:#fff;color:#202020;display:flex;flex-direction:column}
-.account-header{width:min(1280px,calc(100% - 48px));height:92px;margin:0 auto;border-bottom:1px solid #ececec;display:flex;align-items:center;justify-content:space-between}
-.account-logo{display:block;width:196px;height:auto}
-.account-close{width:42px;height:42px;border-radius:50%;background:#f3f3f3;color:#222;display:grid;place-items:center;font-size:32px;font-weight:400;line-height:1;transition:.2s}
-.account-close:hover{background:var(--account-accent);color:#fff}
-.account-panel{width:min(520px,calc(100% - 40px));margin:54px auto;padding:38px 40px 40px;border:1px solid #e9e9e9;border-top:5px solid var(--account-accent);border-radius:18px;box-shadow:0 12px 35px #0000000d}
-.account-kicker{margin:0 0 9px;color:var(--account-accent);font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
-.account-panel h1{margin:0;font-size:32px;line-height:1.15;letter-spacing:-.03em}
-.account-intro{margin:12px 0 0;color:#737373;font-size:15px;line-height:1.55}
-.account-page .auth-form{margin:28px 0 0}
-.account-page .auth-form>label{display:block;position:relative;margin:0 0 18px;color:#3b3b3b;font-size:13px;font-weight:700}
-.account-page .auth-form input{display:block;width:100%;height:50px;margin-top:8px;padding:0 15px;background:#fff;border:1px solid #d7d7d7;border-radius:10px;color:#202020;font-size:16px;outline:0;transition:border-color .2s,box-shadow .2s}
-.account-page .auth-form input:focus{border-color:var(--account-accent);box-shadow:0 0 0 3px #ed22271a}
-.account-page .valid-email input,.account-page .valid-email input:focus{border-color:#159447;padding-right:42px;box-shadow:0 0 0 3px #15944714}
-.email-valid{position:absolute;right:15px;bottom:13px;color:#159447;font-size:20px;font-weight:800}
-.account-continue{width:100%;min-height:50px;border:0;border-radius:999px;background:var(--account-accent);color:#fff;font-size:16px;font-weight:800;cursor:pointer;transition:filter .2s,transform .2s}
-.account-continue:hover{filter:brightness(.92)}.account-continue:active{transform:translateY(1px)}.account-continue:disabled{opacity:.65;cursor:wait}
-.account-page .auth-switch{margin:20px 0 0!important;text-align:center;font-size:14px!important;font-weight:700!important}
-.account-page .auth-switch a,.account-footer>a{color:var(--account-accent);text-decoration:none}.account-page .auth-switch a:hover,.account-footer>a:hover{text-decoration:underline}
+ /* Account screens â€” black like the public navigation drawer: white text, yellow accent */
+.account-page{--account-accent:#f3cc1d;--account-panel:#161616;--account-line:#3a3a3a;--account-hairline:#242424;--account-muted:#9a9a9a;--account-text:#e6e8ea;--account-error:#ff8a8a;min-height:100vh;background:#0e0e0e;color:#fff;display:flex;flex-direction:column}
+.account-header{width:min(1280px,calc(100% - 48px));height:88px;margin:0 auto;border-bottom:1px solid var(--account-hairline);display:flex;align-items:center;justify-content:space-between}
+.account-logo{display:block;width:196px;height:auto;filter:brightness(0) invert(1)}
+.account-close{width:42px;height:42px;border-radius:50%;background:transparent;color:#fff;display:grid;place-items:center;font-size:34px;font-weight:300;line-height:1;transition:.2s;text-decoration:none}
+.account-close:hover{background:#202020;color:var(--account-accent)}
+.account-panel{width:min(460px,calc(100% - 40px));margin:46px auto;padding:0;background:transparent;border:0;border-top:4px solid var(--account-accent);border-radius:0;box-shadow:none}
+.account-kicker{margin:18px 0 9px;color:var(--account-accent);font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+.account-panel h1{margin:0;font-size:30px;line-height:1.2;letter-spacing:-.02em;color:#fff}
+.account-intro{margin:10px 0 0;color:var(--account-muted);font-size:15px;line-height:1.55}
+.account-page .auth-form{margin:26px 0 0}
+.account-page .auth-form>label{display:block;position:relative;margin:0 0 18px;color:var(--account-text);font-size:13px;font-weight:700}
+.account-page .auth-form input{display:block;width:100%;height:50px;margin-top:8px;padding:0 15px;background:var(--account-panel);border:1px solid var(--account-line);border-radius:8px;color:#fff;font-size:16px;outline:0;transition:border-color .2s,box-shadow .2s;caret-color:var(--account-accent)}
+.account-page .auth-form input::placeholder{color:#6f6f6f}
+.account-page .auth-form input:focus{border-color:var(--account-accent);box-shadow:0 0 0 3px #f3cc1d26}
+.account-page .auth-form input:-webkit-autofill{-webkit-text-fill-color:#fff;-webkit-box-shadow:0 0 0 1000px var(--account-panel) inset;caret-color:var(--account-accent)}
+.account-page .valid-email input,.account-page .valid-email input:focus{border-color:#22c55e;padding-right:42px;box-shadow:0 0 0 3px #22c55e26}
+.email-valid{position:absolute;right:15px;bottom:13px;color:#22c55e;font-size:20px;font-weight:800}
+.account-continue{width:100%;min-height:50px;border:0;border-radius:8px;background:var(--account-accent);color:#0e0e0e;font-size:16px;font-weight:800;letter-spacing:.02em;cursor:pointer;transition:filter .2s,transform .2s}
+.account-continue:hover{filter:brightness(.94)}.account-continue:active{transform:translateY(1px)}.account-continue:disabled{opacity:.55;cursor:wait}
+.account-page .auth-switch{margin:18px 0 0!important;text-align:center;font-size:14px!important;font-weight:700!important;color:var(--account-muted)}
+.account-page .auth-switch a,.account-page .auth-switch a:hover{text-decoration:underline}
 .auth-method-toggle{display:block;margin:16px auto 0;border:0;background:none;color:var(--account-accent);font-size:14px;font-weight:700;cursor:pointer}
-.account-page .form-message{margin:0 0 18px;border-radius:9px;padding:11px 13px;font-size:13px;line-height:1.4}
-.account-page .form-message.error{background:#fff0f0;color:#a8181d}.account-page .form-message.success{background:#eaf8f0;color:#087342}
-.account-footer{margin-top:auto;background:#f6f6f6;border-top:1px solid #e6e6e6;padding:25px max(24px,calc((100% - 1280px)/2)) 22px}
-.account-footer>a{display:inline-block;margin-bottom:18px;font-size:14px;font-weight:800}
-.account-footer nav{display:flex;flex-wrap:wrap;gap:10px 22px;border-top:1px solid #ddd;padding-top:17px}
-.account-footer nav a{color:#3d3d3d;font-size:12px;font-weight:700}.account-footer nav a:hover{text-decoration:underline}
-.account-footer p{max-width:900px;margin:16px 0 0;color:#777;font-size:11px;line-height:1.5}.account-footer p a{color:#333;text-decoration:underline}
+.account-page .form-message{margin:0 0 18px;border-radius:8px;padding:11px 13px;font-size:13px;line-height:1.45;border-left:3px solid transparent}
+.account-page .form-message.error{background:#2b1414;color:#ff8a8a;border-left-color:#ff6b6b}.account-page .form-message.success{background:#122a1d;color:#6ee7b7;border-left-color:#22c55e}
 .account-panel:has(.auth-verify)>.account-kicker,.account-panel:has(.auth-verify)>h1,.account-panel:has(.auth-verify)>.account-intro,.account-panel:has(.auth-setup)>.account-kicker,.account-panel:has(.auth-setup)>h1,.account-panel:has(.auth-setup)>.account-intro{display:none}
-.account-panel:has(.auth-verify),.account-panel:has(.auth-setup){margin-top:54px}
-.auth-name-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.auth-name-row>label{display:block;position:relative;margin:0 0 18px;color:#3b3b3b;font-size:13px;font-weight:700}
+.account-panel:has(.auth-verify),.account-panel:has(.auth-setup){margin-top:46px;padding-top:22px}
+.auth-name-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.auth-name-row>label{display:block;position:relative;margin:0 0 18px;color:var(--account-text);font-size:13px;font-weight:700}
 @media(max-width:480px){.auth-name-row{grid-template-columns:1fr}}
-.auth-verify h2,.auth-setup h2{margin:0 0 10px;text-align:center;font-size:28px;line-height:1.2}
-.verify-email{display:block;margin:0 auto 24px;border:0;background:none;color:#333;font-size:14px;font-weight:700;cursor:pointer}
+.auth-verify h2,.auth-setup h2{margin:0 0 10px;text-align:center;font-size:26px;line-height:1.25;color:#fff}
+.verify-email{display:block;margin:0 auto 24px;border:0;background:none;color:var(--account-text);font-size:14px;font-weight:700;cursor:pointer}
 .verify-email span,.verify-edit{color:var(--account-accent)}
-.auth-verify>p{margin:0 0 12px;color:#5f5f5f;font-size:14px;line-height:1.5}.auth-verify>label{margin-top:22px!important}.auth-verify input{font-size:22px!important;font-weight:800;letter-spacing:.28em;text-align:center}
-.verify-help{margin:16px 0 7px!important;text-align:center}.verify-edit{display:block;margin:auto;border:0;background:none;padding:0;font-size:13px;font-weight:700;cursor:pointer}
-.setup-email{text-align:center;color:#666;margin:0 0 26px;font-size:14px;font-weight:700}
-.password-rules{margin:2px 0 20px;border-radius:10px;background:#f7f7f7;padding:14px 16px;color:#555;font-size:13px;line-height:1.45}.password-rules ul{margin:6px 0 0;padding-left:20px}
-.account-page .password-field{position:relative}.account-page .password-field input{padding-right:145px}.password-field>button{position:absolute;right:14px;bottom:16px;border:0;background:none;color:var(--account-accent);font-size:12px;font-weight:800;cursor:pointer}
-@media(max-width:700px){.account-header{width:calc(100% - 32px);height:72px}.account-logo{width:168px}.account-close{width:36px;height:36px;font-size:28px}.account-panel{width:calc(100% - 24px);margin:28px auto;padding:30px 24px 32px;border-radius:14px}.account-panel h1{font-size:28px}.account-panel:has(.auth-verify),.account-panel:has(.auth-setup){margin-top:28px}.auth-verify h2,.auth-setup h2{font-size:26px}.account-footer{padding:22px 20px}.account-footer nav{gap:10px 16px}.account-page .password-field input{padding-right:130px}.password-field>button{font-size:11px}}
+.auth-verify>p{margin:0 0 12px;color:var(--account-muted);font-size:14px;line-height:1.5}.auth-verify>label{margin-top:22px!important}.auth-verify input{font-size:22px!important;font-weight:800;letter-spacing:.28em;text-align:center}
+.verify-help{margin:16px 0 7px!important;text-align:center;color:var(--account-muted)}.verify-edit{display:block;margin:auto;border:0;background:none;padding:0;font-size:13px;font-weight:700;cursor:pointer}
+.setup-email{text-align:center;color:var(--account-muted);margin:0 0 24px;font-size:14px;font-weight:700}
+.password-rules{margin:2px 0 20px;border-radius:8px;background:var(--account-panel);border:1px solid var(--account-hairline);padding:14px 16px;color:var(--account-muted);font-size:13px;line-height:1.45}.password-rules ul{margin:6px 0 0;padding-left:20px}.password-rules strong{color:var(--account-text)}
+.account-page .password-field{position:relative}.account-page .password-field input{padding-right:150px}.password-field>button{position:absolute;right:14px;bottom:17px;border:0;background:none;color:var(--account-accent);font-size:12px;font-weight:800;cursor:pointer}
+@media(max-width:700px){.account-header{width:calc(100% - 32px);height:72px}.account-logo{width:168px}.account-close{width:36px;height:36px;font-size:28px}.account-panel{width:calc(100% - 24px);margin:30px auto}.account-panel h1{font-size:26px}.account-panel:has(.auth-verify),.account-panel:has(.auth-setup){margin-top:22px}.auth-verify h2,.auth-setup h2{font-size:23px}.account-page .password-field input{padding-right:130px}.password-field>button{font-size:11px}}
 @media(max-width:640px){.shell{width:min(100% - 24px,1280px)}.bbc-mast{height:60px}.bbc-logo span{font-size:14px;padding:7px}.bbc-account a{font-size:12px}.bbc-nav>div{height:42px}.bbc-alert{padding:20px 0}.bbc-lead h1{font-size:32px}.footer-links{gap:16px}.footer-social{gap:16px;flex-wrap:wrap}.footer-social strong{width:100%;margin:0}.bbc-ad-space.footer-ad{height:180px}}
 
 .advertorial-label{display:block;width:fit-content;padding:.3rem .5rem;margin:.5rem 0;background:#fff1cb;color:#5b3b00;font:700 .8rem var(--font-sans);border:1px solid #b78017}.review-actions fieldset{border:0;padding:0;margin:0;min-width:0}
@@ -197,7 +195,7 @@ a.drawer-item:hover,a.drawer-item-link:hover,button.drawer-item-toggle:hover{bac
   .news-london-text h2{font-size:24px;line-height:28px}
   .news-dundee{grid-template-columns:1fr}
 }
-/* Olahraga — BBC Sport layout (reference: bbc.com/sport). Used only by /kanal/olahraga. */
+/* Olahraga â€” BBC Sport layout (reference: bbc.com/sport). Used only by /kanal/olahraga. */
 .visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 .section-sport .section-shell{padding-top:22px}
 .sport-meta{display:flex;align-items:center;gap:6px;font-family:var(--font-sans);font-size:12px;line-height:15px;letter-spacing:-.1px;margin-top:6px}
@@ -231,7 +229,7 @@ a.drawer-item:hover,a.drawer-item-link:hover,button.drawer-item-toggle:hover{bac
 .sport-five-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:24px 14px}
 .sport-five-card .sport-img-title{font-size:16px;line-height:20px}
 
-/* "Berita olahraga lainnya" — big feature left, small-card grid right */
+/* "Berita olahraga lainnya" â€” big feature left, small-card grid right */
 .sport-more{margin-top:46px}
 .sport-more-title{font:800 22px/1.25 var(--font-sans);color:#0e0e0e;letter-spacing:-.02em;margin:0 0 20px}
 .sport-more-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:30px;align-items:start}
@@ -265,12 +263,12 @@ a.drawer-item:hover,a.drawer-item-link:hover,button.drawer-item-toggle:hover{bac
 .drawer-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 @media (prefers-reduced-motion:reduce){.drawer-overlay,.drawer-panel{transition:none}}
 
-/* Custom scrollbar — matches USS Feed */
+/* Custom scrollbar â€” matches USS Feed */
 html{scrollbar-color:#0e0e0e #f5f5f5;scrollbar-width:thin}
 ::-webkit-scrollbar{width:8px;height:8px;background:#111111}
 ::-webkit-scrollbar-track{background-color:#f5f5f5;box-shadow:inset 0 0 3px rgba(0,0,0,.2)}
 ::-webkit-scrollbar-thumb{background-color:#0e0e0e;border-radius:10px;border:1px solid #0e0e0e}
-/* Kanal (section) page — BBC Arts layout */
+/* Kanal (section) page â€” BBC Arts layout */
 .section-shell{padding-top:0}
 .section-shell.section-arts{max-width:1280px}
 .arts-hero{position:relative;display:grid}
@@ -286,7 +284,7 @@ html{scrollbar-color:#0e0e0e #f5f5f5;scrollbar-width:thin}
 .section-pagination{display:flex;justify-content:flex-end;gap:12px;margin-top:28px}
 .section-pagination a{border:1px solid #202224;border-radius:8px;color:#202224;padding:9px 16px;font-family:var(--font-sans);font-size:13px;font-weight:700}
 .section-pagination a:hover{background:#202224;color:#fff}
-/* Sub-kanal variants — same design vocabulary, different arrangement (layouting only) */
+/* Sub-kanal variants â€” same design vocabulary, different arrangement (layouting only) */
 .lead-top{display:grid;border-bottom:1px solid #e6e8ea;padding:6px 0 20px}
 .lead-top-media{display:block;overflow:hidden;background:#e6e8ea;line-height:0}
 .lead-top-media img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover}
@@ -329,7 +327,7 @@ html{scrollbar-color:#0e0e0e #f5f5f5;scrollbar-width:thin}
   .arts-hero-text h2{font-size:25px;line-height:29px}
 }
 .bbc-menu-notched{border:0;background:none;height:42px;display:flex;align-items:center;padding:0 6px;cursor:pointer;border-radius:2px;color:inherit}.bbc-menu-notched img{display:block;height:17px;width:auto}.bbc-menu-notched:hover{background:#f0f0f0}
-/* Search results page — BBC search layout (bbc.com/search) */
+/* Search results page â€” BBC search layout (bbc.com/search) */
 .bbc-search-page{padding:34px 0 48px}
 .bbc-search-bar{display:flex;align-items:stretch;height:66px;border:1px solid #6f6f6f;background:#fff}
 .bbc-search-bar input{flex:1;min-width:0;height:100%;border:0;outline:0;padding:0 20px;font-family:var(--font-sans),Arial,sans-serif;font-size:22px;color:#121212;background:#fff}

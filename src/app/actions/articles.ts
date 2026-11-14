@@ -164,14 +164,14 @@ export async function saveArticle(_: ArticleState, formData: FormData): Promise<
   }
   // shortcut: cleanup runs on article saves; add a scheduled worker if another upload path is introduced.
   await cleanupOrphanedImages(supabase, profile.id);
-  revalidatePath("/kontributor");
+  revalidatePath("/dashboard");
   if (publishDirectly) {
     revalidatePath("/");
     revalidatePath("/artikel", "layout");
     revalidatePath("/sitemap.xml");
     revalidatePath("/news-sitemap.xml");
   }
-  if (intent === "submit") redirect("/kontributor?tab=artikel#dashboard-panel");
+  if (intent === "submit") redirect("/dashboard?tab=artikel#dashboard-panel");
   return { success: "Draft tersimpan.", id: data.id, categoryId: data.category_id, coverUrl: input.cover_url ?? "", blockUrls: Object.fromEntries(blocks.flatMap(block => block.image_url ? [[block.id, block.image_url]] : [])) };
 }
 
@@ -186,7 +186,7 @@ export async function reviewArticle(_: ArticleState, formData: FormData): Promis
   const { error } = await supabase.rpc("review_article", { target_id: id, next_status: decision, expected_status: String(formData.get("expected_status") ?? ""), review_note: note || null, advertorial: formData.get("advertorial") === "on" });
   if (error) return { error: error.code === "40001" ? "Status telah berubah karena keputusan editor lain. Muat ulang halaman sebelum memutuskan kembali." : "Keputusan belum tersimpan. Periksa status dan catatan lalu coba lagi." };
   revalidatePath("/redaksi");
-  revalidatePath("/kontributor");
+  revalidatePath("/dashboard");
   revalidatePath("/");
   revalidatePath(`/redaksi/${id}`);
   revalidatePath("/artikel", "layout");

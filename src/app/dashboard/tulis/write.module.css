@@ -1,6 +1,6 @@
-.page{--red:#ed2227;color:#202225}
+.page{--red:#202225;color:#202225}
 .main{width:100%}
 .back{display:inline-flex;align-items:center;color:var(--red);font-size:14px;font-weight:800;margin-bottom:28px}
-.title{display:flex;align-items:center;gap:12px;margin-bottom:28px}.title span{width:20px;height:20px;border-radius:4px;background:var(--red);clip-path:polygon(0 0,75% 0,100% 50%,75% 100%,0 100%)}
+.title{display:flex;align-items:center;gap:12px;margin-bottom:28px}.title span{width:20px;height:20px;border-radius:4px;background:var(--aksen);clip-path:polygon(0 0,75% 0,100% 50%,75% 100%,0 100%)}
 .title h1{font-size:34px;line-height:1.2;margin:0;font-weight:800;letter-spacing:-.025em}
 @media(max-width:540px){.back{margin-bottom:25px}.title{margin-bottom:22px}.title h1{font-size:28px}}

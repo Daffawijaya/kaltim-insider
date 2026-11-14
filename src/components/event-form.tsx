@@ -2,7 +2,7 @@
 
 import { useActionState } from "react";
 import { createEvent, type EventState } from "@/app/actions/events";
-import styles from "@/app/kontributor/kegiatan/events.module.css";
+import styles from "@/app/dashboard/kegiatan/events.module.css";
 
 export function EventForm() {
   const [state, action, pending] = useActionState(createEvent, {} as EventState);

@@ -14,6 +14,8 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       { source: "/kanal/terbaru", destination: "/kanal/news", permanent: true },
+      { source: "/kontributor", destination: "/dashboard", permanent: true },
+      { source: "/kontributor/:path*", destination: "/dashboard/:path*", permanent: true },
     ];
   },
 };

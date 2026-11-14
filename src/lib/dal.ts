@@ -26,7 +26,7 @@ export async function requireUser() {
 
 export async function requireRole(roles: UserRole[]) {
   const profile = await requireUser();
-  if (!roles.includes(profile.role as UserRole)) redirect("/kontributor");
+  if (!roles.includes(profile.role as UserRole)) redirect("/dashboard");
   return profile;
 }
 

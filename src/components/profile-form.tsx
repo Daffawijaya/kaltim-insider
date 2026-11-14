@@ -6,7 +6,7 @@ import { ImagePlus, Pencil, RefreshCw } from "lucide-react";
 import { updateProfile, type ProfileState } from "@/app/actions/profile";
 import { PROFILE_IMAGE_SIZE } from "@/lib/images";
 import { usernameCandidate } from "@/lib/username";
-import styles from "@/app/kontributor/profil/profile.module.css";
+import styles from "@/app/dashboard/profil/profile.module.css";
 
 type Profile = {
   full_name: string;
@@ -110,6 +110,6 @@ export function ProfileForm({ profile }: { profile: Profile }) {
     </section>
 
     {state.error && <p className={styles.error} role="alert">{state.error}</p>}
-    <div className={styles.actions}><Link href="/kontributor">Batalkan</Link><button type="submit" disabled={busy || pending}>{pending ? "Menyimpan…" : "Simpan"}</button></div>
+    <div className={styles.actions}><Link href="/dashboard">Batalkan</Link><button type="submit" disabled={busy || pending}>{pending ? "Menyimpan…" : "Simpan"}</button></div>
   </form>;
 }

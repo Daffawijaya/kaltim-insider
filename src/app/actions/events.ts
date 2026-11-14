@@ -14,8 +14,8 @@ export async function createEvent(_: EventState, formData: FormData): Promise<Ev
   const supabase = await createClient();
   const { error } = await supabase.from("events").insert({ ...input.value, created_by: profile.id });
   if (error) return { error: "Event belum dapat dibuat. Periksa isian lalu coba lagi." };
-  revalidatePath("/kontributor/kegiatan");
-  revalidatePath("/kontributor/tulis");
+  revalidatePath("/dashboard/kegiatan");
+  revalidatePath("/dashboard/tulis");
   return { success: "Event berhasil dibuat." };
 }
 
@@ -28,6 +28,6 @@ export async function joinEvent(eventId: string) {
   if (eventError || !event) return;
   const { error } = await supabase.from("event_participants").upsert({ event_id: eventId, user_id: profile.id }, { onConflict: "event_id,user_id", ignoreDuplicates: true });
   if (error) return;
-  revalidatePath("/kontributor/kegiatan");
-  revalidatePath("/kontributor/tulis");
+  revalidatePath("/dashboard/kegiatan");
+  revalidatePath("/dashboard/tulis");
 }

@@ -25,14 +25,14 @@ export function AuthForm({ mode }: { mode: "signin" | "signup" }) {
     setPending(true);
     setState({});
     try {
-      const supabase = createClient();
       if (mode === "signin" && !useOtp) {
         const result = await signIn(form);
         if (result.error) return setState(result);
-        router.push("/kontributor");
+        router.push("/dashboard");
         router.refresh();
         return;
       }
+      const supabase = createClient();
       if (step === "email") {
         const nextEmail = String(form.get("email") ?? "").trim();
         setEmail(nextEmail);
@@ -46,7 +46,7 @@ export function AuthForm({ mode }: { mode: "signin" | "signup" }) {
         const { error } = await supabase.auth.verifyOtp({ email, token, type: "email" });
         if (error) return setState({ error: "Kode verifikasi tidak sesuai atau sudah kedaluwarsa." });
         if (mode === "signin") {
-          router.push("/kontributor");
+          router.push("/dashboard");
           router.refresh();
           return;
         }
@@ -55,7 +55,7 @@ export function AuthForm({ mode }: { mode: "signin" | "signup" }) {
       }
       const result = await completeSignup(form);
       if (result.error) return setState(result);
-      router.push("/kontributor");
+      router.push("/dashboard");
       router.refresh();
     } catch {
       setState({ error: "Layanan akun sedang tidak tersedia. Coba lagi beberapa saat." });
